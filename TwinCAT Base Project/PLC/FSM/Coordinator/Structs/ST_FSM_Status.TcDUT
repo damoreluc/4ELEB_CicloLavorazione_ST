@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <DUT Name="ST_FSM_Status" Id="{12898072-b215-0784-358a-212c1f13e28c}">
+    <Declaration><![CDATA[TYPE ST_FSM_Status :
+STRUCT
+	bCritical	: BOOL;					// la macchina ha almento una condizione critica attiva
+	bError		: BOOL;					// la macchina ha almento una condizione di errore attiva	
+	bWarning	: BOOL;					// la macchina ha almeno una segnalazione attiva	
+	bInfo		: BOOL;					// la macchina ha almeno una informazione attiva			
+	bVerbose	: BOOL;					// la macchina ha almeno un messaggio attiva
+	
+	bFailure	: BOOL;					// la macchina è in avaria (critica + error)	
+	eStep		: E_FSM_Step;			// passo della macchina a stati
+	strStep		: STRING;				// passo come stringa
+	tStepTime	: TIME;					// tempo di permanenza nel passo
+	eErrorStep	: E_FSM_Step;			// passo in cui si è generato l'errore
+	nErrorID	: DINT;					// codice di errore
+	
+	stZ1		: ST_Z1_Status;			// stato del dispositivo Z1
+	stZ2		: ST_Z2_Status;			// stato del dispositivo Z2	
+	stZ3		: ST_Z3_Status;			// stato del dispositivo Z3
+	stZ4		: ST_Z4_Status;			// stato del dispositivo Z4	
+	stZ5		: ST_Z5_Status;			// stato del dispositivo Z5
+	stZ6		: ST_Z6_Status;			// stato del dispositivo Z6
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <DUT Name="ST_FSM_RawOut" Id="{9de3bb9e-2b43-0953-28c0-5960b5ffb95f}">
+    <Declaration><![CDATA[TYPE ST_FSM_RawOut :
+STRUCT
+	bYellow		AT %Q*	:	BOOL;		// luce gialla
+	bGreen		AT %Q*	:	BOOL;		// luce verde
+	bRed		AT %Q*	:	BOOL;		// luce rossa	
+	bQ1			AT %Q*	:	BOOL;		// Rientro slider 1
+	bQ2			AT %Q*	:	BOOL;		// Estensione slider 1
+	bQ3			AT %Q*	:	BOOL;		// Rientro slider 2
+	bQ4			AT %Q*	:	BOOL;		// Estensione slider 2
+	bQ5			AT %Q*	:	BOOL;		// Motore nastro caricamento (ingresso zona Z1)
+	bQ6			AT %Q*	:	BOOL;		// Motore nastro zona fresa (Z3)
+	bQ7			AT %Q*	:	BOOL;		// Motore fresa
+	bQ8			AT %Q*	:	BOOL;		// Motore nastro zona trapano (Z4)
+	bQ9			AT %Q*	:	BOOL;		// Motore trapano
+	bQ10		AT %Q*	:	BOOL;		// Motore nastro scarico (uscita zona Z6)	
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

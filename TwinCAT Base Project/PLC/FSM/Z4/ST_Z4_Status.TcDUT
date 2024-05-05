@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <DUT Name="ST_Z4_Status" Id="{3e362863-7816-0613-096f-45afcc3fbf46}">
+    <Declaration><![CDATA[TYPE ST_Z4_Status :
+STRUCT
+	eStep		:	E_Z4_Step;		// passo della macchina a stati per Z4
+	strStep		:	STRING;			// passo come stringa
+	tStepTime	:	TIME;			// tempo di permanenza nello stato
+	eErrorStep	:	E_Z4_Step;		// stato in cui si è generato l'errore
+	nErrorId	:	UDINT;			// id errore
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

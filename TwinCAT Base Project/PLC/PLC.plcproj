@@ -20,6 +20,136 @@
     <CombineIds>true</CombineIds>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Diagnostic\GVL_Diagnostic.TcGVL">
+      <SubType>Code</SubType>
+      <LinkAlways>true</LinkAlways>
+    </Compile>
+    <Compile Include="Diagnostic\ST_Diagnostic.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Coordinator\Enums\E_FSM_Step.TcTLEO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Coordinator\FBs\FB_FSM.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Coordinator\FBs\FB_FSM_Diagnostic.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Coordinator\FBs\FB_FSM_ReadCmd.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Coordinator\FBs\FB_FSM_ReadCtrl.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Coordinator\FBs\FB_FSM_ReadInputs.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Coordinator\FBs\FB_FSM_WriteOutputs.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Coordinator\FB_FSM_Main.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Coordinator\FCs\FC_AllStopped.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Coordinator\Structs\ST_FSM_Cmd.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Coordinator\Structs\ST_FSM_Ctrl.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Coordinator\Structs\ST_FSM_In.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Coordinator\Structs\ST_FSM_Out.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Coordinator\Structs\ST_FSM_Params.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Coordinator\Structs\ST_FSM_RawIn.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Coordinator\Structs\ST_FSM_RawOut.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Coordinator\Structs\ST_FSM_Status.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z1\E_Z1_Step.TcTLEO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z1\FB_Z1_FSM.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z1\ST_Z1_Params.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z1\ST_Z1_Status.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z2\E_Z2_Step.TcTLEO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z2\FB_Z2_FSM.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z2\ST_Z2_Params.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z2\ST_Z2_Status.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z3\E_Z3_Step.TcTLEO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z3\FB_Z3_FSM.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z3\ST_Z3_Params.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z3\ST_Z3_Status.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z4\E_Z4_Step.TcTLEO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z4\FB_Z4_FSM.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z4\ST_Z4_Params.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z4\ST_Z4_Status.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z5\E_Z5_Step.TcTLEO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z5\FB_Z5_FSM.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z5\ST_Z5_Params.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z5\ST_Z5_Status.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z6\E_Z6_Step.TcTLEO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z6\FB_Z6_FSM.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z6\ST_Z6_Params.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FSM\Z6\ST_Z6_Status.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="PlcTask.TcTTO">
       <SubType>Code</SubType>
     </Compile>
@@ -28,7 +158,20 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Diagnostic" />
     <Folder Include="DUTs" />
+    <Folder Include="FSM" />
+    <Folder Include="FSM\Coordinator" />
+    <Folder Include="FSM\Coordinator\Enums" />
+    <Folder Include="FSM\Coordinator\FBs" />
+    <Folder Include="FSM\Coordinator\FCs" />
+    <Folder Include="FSM\Coordinator\Structs" />
+    <Folder Include="FSM\Z1" />
+    <Folder Include="FSM\Z2" />
+    <Folder Include="FSM\Z3" />
+    <Folder Include="FSM\Z4" />
+    <Folder Include="FSM\Z5" />
+    <Folder Include="FSM\Z6" />
     <Folder Include="GVLs" />
     <Folder Include="VISUs" />
     <Folder Include="POUs" />
@@ -45,6 +188,9 @@
     <PlaceholderReference Include="Tc3_Module">
       <DefaultResolution>Tc3_Module, * (Beckhoff Automation GmbH)</DefaultResolution>
       <Namespace>Tc3_Module</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="Util">
+      <DefaultResolution>Util, * (System)</DefaultResolution>
     </PlaceholderReference>
   </ItemGroup>
   <ProjectExtensions>

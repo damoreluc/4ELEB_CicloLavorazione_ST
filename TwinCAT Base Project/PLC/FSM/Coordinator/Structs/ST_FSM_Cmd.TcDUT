@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <DUT Name="ST_FSM_Cmd" Id="{a4de43dc-0b81-0171-0e84-27cc067da359}">
+    <Declaration><![CDATA[TYPE ST_FSM_Cmd :
+STRUCT
+	bAck				:	BOOL;	(* Riconoscimento allarmi *)
+	bStop				:	BOOL;	(* Arresta la macchina *)
+	bStart				:	BOOL;	(* Mette in marcia la macchina *)
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

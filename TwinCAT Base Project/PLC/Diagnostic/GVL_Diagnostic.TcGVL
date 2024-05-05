@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <GVL Name="GVL_Diagnostic" Id="{1679d5f9-795b-070e-13d7-3eb2b1ec2ef8}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL CONSTANT
+	cMAXEVENTS : UDINT := 64;
+END_VAR
+]]></Declaration>
+  </GVL>
+</TcPlcObject>

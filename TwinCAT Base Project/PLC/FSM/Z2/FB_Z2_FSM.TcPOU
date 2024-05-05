@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_Z2_FSM" Id="{4d1d1580-08d8-0a42-246f-0278acc69dae}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Z2_FSM
+VAR_INPUT
+	bEnable		:	BOOL;
+	bAck		:	BOOL;
+//	bStart		:	BOOL;	//	Z1 è in Done
+	bStop		:	BOOL;
+	bI1			:	BOOL;
+	bI2			:	BOOL;
+	bI5			:	BOOL;   // transizione da Ready a WaitZ3
+	stParams	:	ST_Z2_Params;	
+END_VAR
+VAR_IN_OUT
+	stStatus	:	ST_FSM_Status;	
+END_VAR
+VAR_OUTPUT
+	// Digital Outputs
+	bQ1			:	BOOL;
+	bQ2			:	BOOL;	
+	bErr		:	BOOL;
+END_VAR
+VAR
+	// FSM internal variables
+	bInitialized	:	BOOL;
+	eNewstep		:	E_Z2_Step;
+	bEntryact		:	BOOL;
+	fbTonStep		:	TON;
+	
+//	fbRtStart		:	R_TRIG;
+	fbRtStop		:	R_TRIG;
+	fbRtI1			:	R_TRIG;
+	fbRtI2			:	R_TRIG;
+	fbRtI5			:	R_TRIG;
+	bStopRequest	:	BOOL;	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF NOT bInitialized THEN
+	eNewstep :=  E_Z2_Step.NoStep;
+	stStatus.stZ2.eStep :=  E_Z2_Step.Stop;
+	bEntryact := FALSE;
+	bInitialized := TRUE;	
+	bErr := FALSE;
+	stStatus.stZ2.eErrorStep :=  E_Z2_Step.NoStep;	
+	stStatus.stZ2.nErrorId := 0;	
+ELSE
+	(* fronti *)
+//	fbRtStart(CLK:= bStart);
+	fbRtStop(CLK:= bStop);	
+	fbRtI1(CLK := bI1);
+	fbRtI2(CLK := bI2);
+	fbRtI5(CLK := bI5);
+	
+	(* richieste *)
+	IF fbRtStop.Q THEN
+		bStopRequest := TRUE;
+	END_IF; 
+
+	(* disabilitata o avaria *)
+	IF NOT bEnable THEN
+		eNewstep := E_Z2_Step.NeOrError;
+	END_IF;
+	
+	(* aggiornamento dello stato *)
+	IF eNewstep <>  E_Z2_Step.NoStep THEN
+		stStatus.stZ2.eStep := eNewstep;
+		eNewstep :=  E_Z2_Step.NoStep;
+		bEntryact := FALSE;
+	END_IF;	
+	
+	(* switch - case della MSF *)
+	CASE stStatus.stZ2.eStep OF
+	// To be done...
+	
+	
+	ELSE
+			eNewstep :=  E_Z2_Step.NeOrError;
+			stStatus.stZ2.eErrorStep :=  E_Z2_Step.Unknown;			
+			stStatus.stZ2.nErrorId := 16#0002_9999;	
+	END_CASE
+	
+	(* call FBs *)
+	
+	(* tempo di permanenza nello step *)
+	fbTonStep(IN := (eNewstep =  E_Z2_Step.NoStep), PT := T#500H);
+	stStatus.stZ2.tStepTime := fbTonStep.ET;	
+	
+END_IF	]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

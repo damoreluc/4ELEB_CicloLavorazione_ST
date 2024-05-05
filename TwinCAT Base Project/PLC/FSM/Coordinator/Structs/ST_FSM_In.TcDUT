@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <DUT Name="ST_FSM_In" Id="{8ce954c8-2565-0ed5-0478-ff0b76cc9bef}">
+    <Declaration><![CDATA[TYPE ST_FSM_In :
+STRUCT
+	(* digital *)
+	bEmergency		:	BOOL;				// emergenza (NC)
+	bStartButton	:	BOOL;				// pulsante di start (NO)
+	bStopButton		:	BOOL;				// pulsante di stop (NO)
+	bAckButton		:	BOOL;				// pulsante di riconoscimento allarmi (NO)
+	bI1				:	BOOL;				// Fine corsa anteriore slider 1 (NO)
+	bI2				:	BOOL;				// Fine corsa posteriore slider 1 (NO)
+	bI3				:	BOOL;				// Fine corsa anteriore slider 2 (NO)
+	bI4				:	BOOL;				// Fine corsa posteriore slider 2 (NO)
+	bI5				:	BOOL;				// Sensore ingresso slider 1 (NO)
+	bI6				:	BOOL;				// Sensore presenza pezzo sotto la fresa (NO)	
+	bI7				:	BOOL;				// Sensore presenza pezzo su nastro caricamento (ingresso) (NO)
+	bI8				:	BOOL;				// Sensore presenza pezzo sotto il trapano (NO)
+	bI9				:	BOOL;				// Sensore presenza pezzo su nastro di uscita (NO)
+	
+	(* analog *)
+
+	
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

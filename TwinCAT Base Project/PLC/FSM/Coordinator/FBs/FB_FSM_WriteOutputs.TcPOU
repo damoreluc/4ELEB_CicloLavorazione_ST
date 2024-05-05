@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_FSM_WriteOutputs" Id="{f6e7d43a-2d0e-0ade-30d3-a2c7713b1c23}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_FSM_WriteOutputs
+VAR_INPUT
+	stOut		:	ST_FSM_Out;
+END_VAR
+VAR_OUTPUT
+	stRawOut	:	ST_FSM_RawOut;
+END_VAR
+VAR
+	fbBlink		:	BLINK;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// blinking
+fbBlink(ENABLE:= TRUE, TIMELOW:= T#500MS, TIMEHIGH:= T#500MS);
+
+// indicators on control panel
+IF stOut.bBlinkingYellow THEN
+	stRawOut.bYellow := fbBlink.OUT;
+ELSE
+	IF stOut.bFixedYellow THEN
+		stRawOut.bYellow := TRUE;
+	ELSE
+		stRawOut.bYellow := FALSE;		
+	END_IF
+END_IF
+
+IF stOut.bBlinkingGreen THEN
+	stRawOut.bGreen := fbBlink.OUT;
+ELSE
+	IF stOut.bFixedGreen THEN
+		stRawOut.bGreen := TRUE;
+	ELSE
+		stRawOut.bGreen := FALSE;		
+	END_IF
+END_IF
+
+IF stOut.bBlinkingRed THEN
+	stRawOut.bRed := fbBlink.OUT;
+ELSE
+	IF stOut.bFixedRed THEN
+		stRawOut.bRed := TRUE;
+	ELSE
+		stRawOut.bRed := FALSE;		
+	END_IF
+END_IF
+
+
+// other digital outputs
+stRawOut.bQ1 := stOut.bQ1;
+stRawOut.bQ2 := stOut.bQ2;
+stRawOut.bQ3 := stOut.bQ3;
+stRawOut.bQ4 := stOut.bQ4;
+stRawOut.bQ5 := stOut.bQ5;
+stRawOut.bQ6 := stOut.bQ6;
+stRawOut.bQ7 := stOut.bQ7;
+stRawOut.bQ8 := stOut.bQ8;
+stRawOut.bQ9 := stOut.bQ9;
+stRawOut.bQ10 := stOut.bQ10;]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

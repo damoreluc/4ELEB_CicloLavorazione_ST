@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <DUT Name="ST_Z6_Params" Id="{c4cb372e-5d05-06f7-13de-8982616f3566}">
+    <Declaration><![CDATA[TYPE ST_Z6_Params :
+STRUCT
+	tDelayToEnd	:	TIME	:= T#2S;	// ritardo per arrivare a fine nastro
+	tUnloading	:	TIME	:= T#3S;	// durata della fase di scarico
+	tStopDelay	:	TIME	:= T#1S;	// permanenza nello stato Stop
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

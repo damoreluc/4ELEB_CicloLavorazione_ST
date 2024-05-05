@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_FSM_ReadCmd" Id="{1397da59-3e70-033e-2f36-eb39909cb263}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_FSM_ReadCmd
+VAR_INPUT
+	stIn	:	ST_FSM_In;
+END_VAR
+VAR_OUTPUT
+	stCmd	:	ST_FSM_Cmd;
+END_VAR
+VAR
+	fbTpStart	: TP;
+	fbTpStop	: TP;	
+	fbTpAck		: TP;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// filters on input button
+fbTpStart( IN := stIn.bStartButton, PT := T#50MS );
+fbTpStop( IN := stIn.bStopButton, PT := T#50MS );
+fbTpAck( IN := stIn.bAckButton, PT := T#50MS );
+
+stCmd.bStart	:= fbTpStart.Q;
+stCmd.bStop		:= fbTpStop.Q;
+stCmd.bAck		:= fbTpAck.Q;]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

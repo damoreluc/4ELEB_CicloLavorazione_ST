@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <DUT Name="ST_Diagnostic" Id="{49a8b024-af7b-0b97-1d91-aac42feb92c1}">
+    <Declaration><![CDATA[TYPE ST_Diagnostic :
+STRUCT
+	aCritical : ARRAY[0..GVL_Diagnostic.cMAXEVENTS - 1] OF BOOL;	// eventi critici
+	aError : ARRAY[0..GVL_Diagnostic.cMAXEVENTS - 1] OF BOOL;		// errori
+	aWarning : ARRAY[0..GVL_Diagnostic.cMAXEVENTS - 1] OF BOOL;		// segnalazioni
+	aInfo : ARRAY[0..GVL_Diagnostic.cMAXEVENTS - 1] OF BOOL;		// informazioni
+	aVerbose : ARRAY[0..GVL_Diagnostic.cMAXEVENTS - 1] OF BOOL;		// messaggi
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

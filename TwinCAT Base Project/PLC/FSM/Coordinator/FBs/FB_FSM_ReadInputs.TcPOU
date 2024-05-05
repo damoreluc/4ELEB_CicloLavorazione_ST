@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_FSM_ReadInputs" Id="{75548464-34e1-00be-33e0-295ac3e814d2}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_FSM_ReadInputs
+VAR_INPUT
+END_VAR
+VAR_IN_OUT
+	stRawIn		:	ST_FSM_RawIn;
+END_VAR
+VAR_OUTPUT
+	stIn		:	ST_FSM_In;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// digital inputs
+stIn.bEmergency := stRawIn.bEmergency;   // NOTA: Emg è sempre attivo basso
+stIn.bStartButton := stRawIn.bStartButton;
+stIn.bStopButton := NOT stRawIn.bStopButton;
+stIn.bAckButton := stRawIn.bAckButton;
+stIn.bI1 := stRawIn.bI1;
+stIn.bI2 := stRawIn.bI2;
+stIn.bI3 := stRawIn.bI3;
+stIn.bI4 := stRawIn.bI4;
+stIn.bI5 := NOT stRawIn.bI5;
+stIn.bI6 := NOT stRawIn.bI6;
+stIn.bI7 := NOT stRawIn.bI7;
+stIn.bI8 := NOT stRawIn.bI8;
+stIn.bI9 := NOT stRawIn.bI9;]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

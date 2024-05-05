@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <DUT Name="ST_Z3_Status" Id="{5e445725-2b3b-0400-0e38-24f5458656bb}">
+    <Declaration><![CDATA[TYPE ST_Z3_Status :
+STRUCT
+	eStep		:	E_Z3_Step;		// passo della macchina a stati per Z3
+	strStep		:	STRING;			// passo come stringa
+	tStepTime	:	TIME;			// tempo di permanenza nello stato
+	eErrorStep	:	E_Z3_Step;		// stato in cui si è generato l'errore
+	nErrorId	:	UDINT;			// id errore
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

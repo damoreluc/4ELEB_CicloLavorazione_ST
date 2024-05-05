@@ -3,10 +3,60 @@
   <POU Name="MAIN" Id="{d6a97a93-bbbb-4808-8334-637627ec2e0f}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
+	
+	bInitialized		:	BOOL;
+	bPLCTaskRunning		:	BOOL;
+	
+	fbGetCurTaskIndex	:	GETCURTASKINDEX;		
+	tTaskCycleTime		:	UDINT;				// CycleTime is expressed in microseconds
+	tTaskExecTime		:	UDINT;				// task execution time expressed in microseconds
+	tTaskMaxExecTime	:	UDINT;				// maximum task execution time expressed in microseconds
+	
+	(* instantiate the main state machine FB_FSM_Main *)
+	fbFsm				:	FB_FSM_Main;
+	
+	(* Local variables *)
+	stRawIn				:	ST_FSM_RawIn;
+	stIn				:	ST_FSM_In;
+	stRawOut			:	ST_FSM_RawOut;
+	stOut				:	ST_FSM_Out;
+	stCtrl				:	ST_FSM_Ctrl;
+	stStatus			:	ST_FSM_Status;
+	
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[]]></ST>
+      <ST><![CDATA[IF NOT bInitialized THEN
+	
+	// Get the Cycle Time of the task to which this PRG is assigned (it will then be shared with the State Machine)
+	fbGetCurTaskIndex();
+	tTaskCycleTime := _TaskInfo[fbGetCurTaskIndex.index].CycleTime / 10;	// CycleTime is expressed in multiples of 100ns
+	bInitialized := TRUE;
+	
+ELSE
+	
+	(* task time *)
+	tTaskExecTime := _TaskInfo[fbGetCurTaskIndex.index].LastExecTime / 10;		// ExecTime is expressed in multiples of 100ns
+	IF tTaskExecTime > tTaskMaxExecTime THEN
+			tTaskMaxExecTime := tTaskExecTime;
+	END_IF;	
+	
+	(* execute main state machine *)
+	fbFsm(
+	bEnable:= TRUE, 
+	tTaskCycleTime:= tTaskExecTime, 
+	nId:= 0, 
+	bHwError:= FALSE, 
+	stRawIn:= stRawIn, 
+	stIn:= stIn, 
+	stRawOut:= stRawOut, 
+	stOut:= stOut, 
+	stCtrl:= stCtrl, 
+	stStatus:= stStatus);	
+	
+	(* system signal *)
+	bPLCTaskRunning := TRUE;
+END_IF]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>

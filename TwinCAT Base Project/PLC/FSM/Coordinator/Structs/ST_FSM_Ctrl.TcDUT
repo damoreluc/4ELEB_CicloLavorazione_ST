@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <DUT Name="ST_FSM_Ctrl" Id="{3c6a414a-59ce-0db7-244b-ad031b924eff}">
+    <Declaration><![CDATA[TYPE ST_FSM_Ctrl :
+STRUCT
+	bEmergency	:	BOOL;		// Emergenza. Deve essere TRUE perchè la macchina possa operare
+	bEnable		:	BOOL;		// Abilitazione macchina. Deve essere TRUE perchè la macchina possa operare
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

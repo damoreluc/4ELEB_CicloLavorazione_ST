@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <EnumerationTextList Name="E_Z3_Step" Id="{44e142bc-df9f-0d0f-2ab2-ba5dee166e6e}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+TYPE E_Z3_Step :
+(
+	(* special steps *)
+	NoStep := -32767,		// nessuno step
+	Unknown := -32000,		// step sconosciuto
+	
+	(* Error steps *)
+	NeOrError := -990,		// non abilitata o in errore
+	Recovering := -980,		// azzeramento errori
+		
+	(* Stop *)
+	Stop := 0,				// S0, stop
+	
+	(* Cycle *)
+	Ready := 100,			// S1, pronto a ricevere pezzo
+	MoveToMill := 120,		// S2, avanza il nastro fino alla fresa
+	Milling := 140,			// S3, lavorazione con la fresa
+	WaitZ4Ready := 160,		// S4, attende che Z4 sia ready
+	MoveToZ4 := 180,		// S5, avanza il nastro fino a Z4
+
+	Done := 800,			// Ciclo concluso
+	
+	(* Stopping *)
+	Stopping := 900	
+);
+END_TYPE
+]]></Declaration>
+    <XmlArchive>
+      <Data>
+        <o xml:space="preserve" t="TextListEnumerationTextListObject">
+          <l n="TextList" t="ArrayList" cet="TextListRow">
+            <o>
+              <v n="TextID">"NoStep"</v>
+              <v n="TextDefault">"-32767"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"Unknown"</v>
+              <v n="TextDefault">"-32000"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"NeOrError"</v>
+              <v n="TextDefault">"-990"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"Recovering"</v>
+              <v n="TextDefault">"-980"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"Stop"</v>
+              <v n="TextDefault">"0"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"Ready"</v>
+              <v n="TextDefault">"100"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"MoveToMill"</v>
+              <v n="TextDefault">"120"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"Milling"</v>
+              <v n="TextDefault">"140"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"WaitZ4Ready"</v>
+              <v n="TextDefault">"160"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"MoveToZ4"</v>
+              <v n="TextDefault">"180"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"Done"</v>
+              <v n="TextDefault">"800"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"Stopping"</v>
+              <v n="TextDefault">"900"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">""</v>
+              <v n="TextDefault">""</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+          </l>
+          <l n="Languages" t="ArrayList" />
+          <v n="GuidInit">{348f296f-efb5-49e4-9a0c-4b25b74b036d}</v>
+          <v n="GuidReInit">{14e2433f-4ce1-4887-86dd-7440b940f829}</v>
+          <v n="GuidExitX">{eb9353a2-2c28-42f2-a107-16668e5f420f}</v>
+        </o>
+      </Data>
+      <TypeList>
+        <Type n="ArrayList">System.Collections.ArrayList</Type>
+        <Type n="Guid">System.Guid</Type>
+        <Type n="String">System.String</Type>
+        <Type n="TextListEnumerationTextListObject">{4b60233c-f940-4beb-b331-82133b520151}</Type>
+        <Type n="TextListRow">{53da1be7-ad25-47c3-b0e8-e26286dad2e0}</Type>
+      </TypeList>
+    </XmlArchive>
+  </EnumerationTextList>
+</TcPlcObject>

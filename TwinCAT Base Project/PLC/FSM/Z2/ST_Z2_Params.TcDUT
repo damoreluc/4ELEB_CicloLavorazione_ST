@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <DUT Name="ST_Z2_Params" Id="{cd6c9504-e220-0cef-1ba2-ba8c3a1033c5}">
+    <Declaration><![CDATA[TYPE ST_Z2_Params :
+STRUCT
+	tMoving		:	TIME	:= T#6S;	// durata della fase di trasporto
+	tStopDelay	:	TIME	:= T#1S;	// permanenza nello stato Stop
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

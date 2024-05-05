@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <EnumerationTextList Name="E_Z1_Step" Id="{add0fde4-f244-01f4-1863-9ae6ca28f126}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+TYPE E_Z1_Step :
+(
+	(* special steps *)
+	NoStep := -32767,		// nessuno step
+	Unknown := -32000,		// step sconosciuto
+	
+	(* Error steps *)
+	NeOrError := -990,		// non abilitata o in errore
+	Recovering := -980,		// azzeramento errori
+		
+	(* Stop *)
+	Stop := 0,				// S0, stop
+	
+	(* Cycle *)
+	Ready := 100,			// S1, pronto a ricevere pezzo
+	DelayToFeeding := 120,	// S2, ritardo prima dell'avvio del nastro
+	Loading := 140,			// S3, trasferimento pezzo verso Z2 
+	DelayToZ2 := 160,		// S4, ritardo post sensore I5 verso Z2
+
+	Done := 800,			// Ciclo concluso
+	
+	(* Stopping *)
+	Stopping := 900	
+);
+END_TYPE
+]]></Declaration>
+    <XmlArchive>
+      <Data>
+        <o xml:space="preserve" t="TextListEnumerationTextListObject">
+          <l n="TextList" t="ArrayList" cet="TextListRow">
+            <o>
+              <v n="TextID">"NoStep"</v>
+              <v n="TextDefault">"-32767"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"Unknown"</v>
+              <v n="TextDefault">"-32000"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"NeOrError"</v>
+              <v n="TextDefault">"-990"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"Recovering"</v>
+              <v n="TextDefault">"-980"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"Stop"</v>
+              <v n="TextDefault">"0"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"Ready"</v>
+              <v n="TextDefault">"100"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"DelayToFeeding"</v>
+              <v n="TextDefault">"120"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"Loading"</v>
+              <v n="TextDefault">"140"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"DelayToZ2"</v>
+              <v n="TextDefault">"160"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"Done"</v>
+              <v n="TextDefault">"800"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"Stopping"</v>
+              <v n="TextDefault">"900"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">""</v>
+              <v n="TextDefault">""</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+          </l>
+          <l n="Languages" t="ArrayList" />
+          <v n="GuidInit">{c6b67cd8-183d-457f-8bf8-1804037e117d}</v>
+          <v n="GuidReInit">{959cb7f9-ef0c-4ef2-898f-0027c7cbf9bc}</v>
+          <v n="GuidExitX">{00805ae4-e4bb-4d3f-8649-a2c3b09228a5}</v>
+        </o>
+      </Data>
+      <TypeList>
+        <Type n="ArrayList">System.Collections.ArrayList</Type>
+        <Type n="Guid">System.Guid</Type>
+        <Type n="String">System.String</Type>
+        <Type n="TextListEnumerationTextListObject">{4b60233c-f940-4beb-b331-82133b520151}</Type>
+        <Type n="TextListRow">{53da1be7-ad25-47c3-b0e8-e26286dad2e0}</Type>
+      </TypeList>
+    </XmlArchive>
+  </EnumerationTextList>
+</TcPlcObject>

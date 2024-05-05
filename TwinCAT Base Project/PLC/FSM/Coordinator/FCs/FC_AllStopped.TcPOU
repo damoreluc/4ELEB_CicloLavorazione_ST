@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FC_AllStopped" Id="{a3e8e66f-6c96-0eff-012c-126d503c0501}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION FC_AllStopped : BOOL
+VAR_INPUT
+	stStatus	:	ST_FSM_Status;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[FC_AllStopped := (stStatus.stZ1.eStep = E_Z1_Step.Stop) AND
+                 (stStatus.stZ2.eStep = E_Z2_Step.Stop) AND
+                 (stStatus.stZ3.eStep = E_Z3_Step.Stop) AND	
+                 (stStatus.stZ4.eStep = E_Z4_Step.Stop) AND
+                 (stStatus.stZ5.eStep = E_Z5_Step.Stop) AND	
+                 (stStatus.stZ6.eStep = E_Z6_Step.Stop);]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

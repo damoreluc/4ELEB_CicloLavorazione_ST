@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <DUT Name="ST_Z3_Params" Id="{54aa2fae-684a-0128-2707-d92ddae7cd33}">
+    <Declaration><![CDATA[TYPE ST_Z3_Params :
+STRUCT
+	tMilling	:	TIME	:= T#6S;	// durata della fase di fresatura
+	tDelayToZ4	:	TIME	:= T#3S;	// ritardo per arrivare a Z4
+	tStopDelay	:	TIME	:= T#1S;	// permanenza nello stato Stop
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

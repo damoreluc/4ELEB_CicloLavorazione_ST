@@ -1,0 +1,198 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_FSM_Main" Id="{c71da7d7-0793-0eea-2c5f-9d351ad6a7b1}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_FSM_Main
+VAR_INPUT
+	(* main inputs to the state machine *)
+	bEnable			: BOOL;		// state machine enable
+	tTaskCycleTime	: UDINT;
+	nId				: USINT;	
+	bHwError		: BOOL;
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR_IN_OUT
+	(* machine I/Os *)
+	stRawIn		:	ST_FSM_RawIn;
+	stIn		:	ST_FSM_In;
+	stRawOut	:	ST_FSM_RawOut;
+	stOut		:	ST_FSM_Out;
+	stCtrl		:	ST_FSM_Ctrl;
+	
+	(* state machine internals, useful for debugging  *)
+	stStatus	:	ST_FSM_Status;	
+END_VAR
+VAR
+	bInitialized	: 	BOOL;		// FB initialization
+	stCmd			:	ST_FSM_Cmd;
+	stParams		:	ST_FSM_Params;	
+	errno			:	INT;
+	fbReadCmd		:	FB_FSM_ReadCmd;
+	fbReadCtrl		:	FB_FSM_ReadCtrl;
+	fbReadIn		:	FB_FSM_ReadInputs;
+	fbDiagnostic	:	FB_FSM_Diagnostic;
+	fbWriteOut		:	FB_FSM_WriteOutputs;
+	
+	(* instantiate the coordinator state machine *)
+    fbStateMachine	:	FB_FSM;
+	
+	(* zone parameters *)
+	stZ1Params		:	ST_Z1_Params;
+	stZ2Params		:	ST_Z2_Params;
+	stZ3Params		:	ST_Z3_Params;	
+	stZ4Params		:	ST_Z4_Params;	
+	stZ5Params		:	ST_Z5_Params;	
+	stZ6Params		:	ST_Z6_Params;	
+	
+	(* instantiate the six zone state machines *)
+	// to be done...
+	fbZ1Machine		:	FB_Z1_FSM;
+	fbZ2Machine		:	FB_Z2_FSM;
+	fbZ3Machine		:	FB_Z3_FSM;
+	fbZ4Machine		:	FB_Z4_FSM;
+	fbZ5Machine		:	FB_Z5_FSM;
+	fbZ6Machine		:	FB_Z6_FSM;
+	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF NOT bInitialized THEN
+	// start-up operations
+	bInitialized := TRUE;
+ELSE
+// 01. Read inputs, controls, parameters and commands
+	fbReadIn(stRawIn := stRawIn,
+             stIn => stIn);	
+	fbReadCtrl(nId := nId,
+               bEnable := bEnable,
+               stIn := stIn,
+               stCtrl => stCtrl);
+    fbReadCmd(stIn := stIn,
+              stCmd => stCmd);
+
+	// 02. events management fbDiagnostic
+	fbDiagnostic(
+	stIn:= stIn, 
+	stOut:= stOut, 
+	stParams:= stParams, 
+	stCtrl:= stCtrl, 
+	bHwError:= bHwError, 
+	bAck:= stCmd.bAck, 
+	stStatus:= stStatus);
+	
+	stStatus.bCritical := fbDiagnostic.bCritical;
+	stStatus.bError := fbDiagnostic.bError;
+	stStatus.bWarning := fbDiagnostic.bWarning;
+	stStatus.bInfo := fbDiagnostic.bInfo;
+	stStatus.bVerbose := fbDiagnostic.bVerbose;
+	stStatus.bFailure := fbDiagnostic.bFailure;
+	stOut.bBlinkingRed := fbDiagnostic.bCritical;
+	stOut.bBlinkingYellow := fbDiagnostic.bBlinking;
+	stOut.bFixedYellow := fbDiagnostic.bFixed;	
+
+	(* 03. call the coordinator state machine *)
+    fbStateMachine( stIn := stIn,
+                    stCtrl := stCtrl,
+                    stCmd := stCmd,
+                    stParams := stParams,
+                    stStatus := stStatus);
+	 
+    (* 04. six secondary state machines  *)
+	
+	(* call Z1 state machine  *)
+	fbZ1Machine(
+		bEnable:= stCtrl.bEnable, 
+		bAck:= (stStatus.eStep = E_FSM_Step.Recovering), 
+		bStart:= (stStatus.eStep = E_FSM_Step.Running), 
+		bStop:= (stStatus.eStep = E_FSM_Step.Stopping), 
+		bI5:= stIn.bI5, 
+		bI7:= stIn.bI7, 
+		stParams:= stZ1Params, 
+		stStatus:= stStatus, 
+		bQ5=> stOut.bQ5);
+
+	(* update global failure flag *)	
+	stStatus.bFailure := stStatus.bFailure OR fbZ1Machine.bErr;
+	
+	(* call Z2 state machine  *)
+	fbZ2Machine(
+		bEnable:= stCtrl.bEnable, 
+		bAck:= (stStatus.eStep = E_FSM_Step.Recovering), 
+		bStop:= (stStatus.eStep = E_FSM_Step.Stopping), 
+		bI1:= stIn.bI1, 
+		bI2:= stIn.bI2, 
+		bI5:= stIn.bI5, 
+		stParams:= stZ2Params, 
+		stStatus:= stStatus, 
+		bQ1=> stOut.bQ1, 
+		bQ2=> stOut.bQ2);
+	
+	(* update global failure flag *)	
+	stStatus.bFailure := stStatus.bFailure OR fbZ2Machine.bErr;
+	
+	(* call Z3 state machine  *)	
+	fbZ3Machine(
+		bEnable:= stCtrl.bEnable, 
+		bAck:= (stStatus.eStep = E_FSM_Step.Recovering), 
+		bStop:= (stStatus.eStep = E_FSM_Step.Stopping), 
+		bI6:= stIn.bI6, 
+		stParams:= stZ3Params, 
+		stStatus:= stStatus, 
+		bQ6=> stOut.bQ6, 
+		bQ7=> stOut.bQ7);
+	
+	(* update global failure flag *)		
+	stStatus.bFailure := stStatus.bFailure OR fbZ3Machine.bErr;	
+	
+	(* call Z4 state machine  *)	
+	fbZ4Machine(
+		bEnable:= stCtrl.bEnable, 
+		bAck:= (stStatus.eStep = E_FSM_Step.Recovering), 
+		bStop:= (stStatus.eStep = E_FSM_Step.Stopping), 
+		bI8:= stIn.bI8, 
+		stParams:= stZ4Params, 
+		stStatus:= stStatus, 
+		bQ8=> stOut.bQ8, 
+		bQ9=> stOut.bQ9);
+		
+	(* update global failure flag *)		
+	stStatus.bFailure := stStatus.bFailure OR fbZ4Machine.bErr;			
+	
+	(* call Z5 state machine  *)
+	fbZ5Machine(
+		bEnable:= stCtrl.bEnable, 
+		bAck:= (stStatus.eStep = E_FSM_Step.Recovering), 
+		bStop:= (stStatus.eStep = E_FSM_Step.Stopping), 
+		bI3:= stIn.bI3, 
+		bI4:= stIn.bI4, 
+		stParams:= stZ5Params, 
+		stStatus:= stStatus, 
+		bQ3=> stOut.bQ3, 
+		bQ4=> stOut.bQ4);
+		
+	(* update global failure flag *)		
+	stStatus.bFailure := stStatus.bFailure OR fbZ5Machine.bErr;			
+	
+	(* call Z6 state machine  *)
+	fbZ6Machine(
+		bEnable:= stCtrl.bEnable, 
+		bAck:= (stStatus.eStep = E_FSM_Step.Recovering), 
+		bStop:= (stStatus.eStep = E_FSM_Step.Stopping), 
+		bI9:= stIn.bI9, 
+		stParams:= stZ6Params, 
+		stStatus:= stStatus, 
+		bQ10=> stOut.bQ10);
+		
+	(* update global failure flag *)		
+	stStatus.bFailure := stStatus.bFailure OR fbZ6Machine.bErr;			
+		
+	
+	// 05. write outputs and machine information
+	fbWriteOut( stOut:= stOut, 
+				stRawOut => stRawOut);
+				
+	// 06. end - other operations			 
+END_IF]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

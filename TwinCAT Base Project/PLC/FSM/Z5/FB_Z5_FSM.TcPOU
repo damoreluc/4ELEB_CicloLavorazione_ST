@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_Z5_FSM" Id="{ea3432fb-ba63-04d6-11c2-9253fd25a5cb}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Z5_FSM
+VAR_INPUT
+	bEnable		:	BOOL;
+	bAck		:	BOOL;
+	bStop		:	BOOL;
+	bI3			:	BOOL;
+	bI4			:	BOOL;
+	stParams	:	ST_Z5_Params;	
+END_VAR
+VAR_IN_OUT
+	stStatus	:	ST_FSM_Status;	
+END_VAR
+VAR_OUTPUT
+	// Digital Outputs
+	bQ3			:	BOOL;
+	bQ4			:	BOOL;	
+	bErr		:	BOOL;
+END_VAR
+VAR
+	// FSM internal variables
+	bInitialized	:	BOOL;
+	eNewstep		:	E_Z5_Step;
+	bEntryact		:	BOOL;
+	fbTonStep		:	TON;
+	
+//	fbRtStart		:	R_TRIG;
+	fbRtStop		:	R_TRIG;
+	fbRtI3			:	R_TRIG;
+	fbRtI4			:	R_TRIG;
+	bStopRequest	:	BOOL;	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF NOT bInitialized THEN
+	eNewstep :=  E_Z5_Step.NoStep;
+	stStatus.stZ5.eStep :=  E_Z5_Step.Stop;
+	bEntryact := FALSE;
+	bInitialized := TRUE;	
+	bErr := FALSE;
+	stStatus.stZ5.eErrorStep :=  E_Z5_Step.NoStep;	
+	stStatus.stZ5.nErrorId := 0;	
+ELSE
+	(* fronti *)
+	fbRtStop(CLK:= bStop);	
+	fbRtI3(CLK := bI3);
+	fbRtI4(CLK := bI4);
+	
+	(* richieste *)
+	IF fbRtStop.Q THEN
+		bStopRequest := TRUE;
+	END_IF; 
+
+	(* disabilitata o avaria *)
+	IF NOT bEnable THEN
+		eNewstep := E_Z5_Step.NeOrError;
+	END_IF;
+	
+	(* aggiornamento dello stato *)
+	IF eNewstep <>  E_Z5_Step.NoStep THEN
+		stStatus.stZ5.eStep := eNewstep;
+		eNewstep :=  E_Z5_Step.NoStep;
+		bEntryact := FALSE;
+	END_IF;	
+	
+	(* switch - case della MSF *)
+	CASE stStatus.stZ5.eStep OF
+	// To be done...
+	
+	
+	ELSE
+			eNewstep :=  E_Z5_Step.NeOrError;
+			stStatus.stZ5.eErrorStep :=  E_Z5_Step.Unknown;			
+			stStatus.stZ5.nErrorId := 16#0005_9999;	
+	END_CASE
+	
+	(* call FBs *)
+	
+	(* tempo di permanenza nello step *)
+	fbTonStep(IN := (eNewstep =  E_Z5_Step.NoStep), PT := T#500H);
+	stStatus.stZ5.tStepTime := fbTonStep.ET;	
+	
+END_IF	]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

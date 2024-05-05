@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_FSM" Id="{d98d3e8f-9e6f-03e2-15bd-3508773e39b6}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_FSM
+VAR_INPUT
+	stIn		:	ST_FSM_In;
+	stCtrl		:	ST_FSM_Ctrl;
+	stCmd		:	ST_FSM_Cmd;
+	stParams	:	ST_FSM_Params;
+END_VAR
+VAR_IN_OUT
+	stStatus	:	ST_FSM_Status;	
+END_VAR
+VAR_OUTPUT	
+	// Digital Outputs
+	stOut		:	ST_FSM_Out;	
+END_VAR
+VAR
+	// FSM internal variables
+	bInitialized	:	BOOL;
+	eNewstep		:	E_FSM_Step;
+	bEntryact		:	BOOL;
+	fbTonStep		:	TON;
+
+	(* filters on other input from plant *)
+	
+	(* stop request *)	
+	bStopRequest	:	BOOL;
+	
+	// all zones are stopped
+	bAllZoneStopped	:	BOOL;	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF NOT bInitialized THEN
+	(* here you can wait events from other controllers *)
+	eNewStep := E_FSM_Step.NoStep;
+	stStatus.eStep := E_FSM_Step.NeOrError;
+	bEntryact := FALSE;
+	bInitialized := TRUE;
+ELSE
+	// --- FSM Cyclical Code ----------------------------------------------
+	
+	// update of the enabling conditions (bStop, alarms, etc.)
+	
+	// 1. FSM Preamble ----------------------------------------------------
+    // 1.a State machine disabled or failure
+	IF NOT stCtrl.bEnable OR NOT stCtrl.bEmergency OR stStatus.bFailure THEN
+		eNewStep := E_FSM_Step.NeOrError;
+	END_IF
+
+	// 1.b Update eStep with the required step to perform
+	//     and set bEntryact to FALSE in order to enable the Entry action
+	IF eNewstep <> E_FSM_Step.NoStep THEN
+		stStatus.eStep := eNewstep;
+		eNewstep := E_FSM_Step.NoStep;
+		bEntryact := FALSE;
+	END_IF;	
+	
+	// 1.c Do filters on signals	
+
+	
+	// Do requests, for example to stop the machine
+	IF stCmd.bStop THEN
+		bStopRequest := TRUE;
+	END_IF
+
+	// 2. The main switch-case ---------------------------------------------------
+	CASE stStatus.eStep OF
+    // to be done...
+						
+	ELSE
+		// this happens also if we forget to code one step 
+		eNewstep := E_FSM_Step.NeOrError;
+		stStatus.eErrorStep := E_FSM_Step.Unknown;
+		stStatus.nErrorID := -9;
+	END_CASE;
+	
+	// 3. FSM Epilogue ------------------------------------------------------
+	
+	// Elapsed time into the current step
+	fbTonStep(IN := (eNewstep = E_FSM_Step.NoStep), PT := T#500H );
+	stStatus.tStepTime := fbTonStep.ET;
+	
+END_IF]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

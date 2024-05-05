@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <DUT Name="ST_FSM_RawIn" Id="{fa26116d-8ba6-0e50-10aa-2604146d2947}">
+    <Declaration><![CDATA[TYPE ST_FSM_RawIn :
+STRUCT
+	(* digital *)
+	bEmergency		AT %I*	:	BOOL;		// emergenza (NC)
+	bStartButton	AT %I*	:	BOOL;		// pulsante di start (NO)
+	bStopButton		AT %I*	:	BOOL;		// pulsante di stop (NC)
+	bAckButton		AT %I*	:	BOOL;		// pulsante di riconoscimento allarmi (NO)
+	bI1				AT %I*	:	BOOL;		// Fine corsa anteriore slider 1 (NO)
+	bI2				AT %I*	:	BOOL;		// Fine corsa posteriore slider 1 (NO)
+	bI3				AT %I*	:	BOOL;		// Fine corsa anteriore slider 2 (NO)
+	bI4				AT %I*	:	BOOL;		// Fine corsa posteriore slider 2 (NO)
+	bI5				AT %I*	:	BOOL;		// Sensore ingresso slider 1 (NC)
+	bI6				AT %I*	:	BOOL;		// Sensore presenza pezzo sotto la fresa (NC)	
+	bI7				AT %I*	:	BOOL;		// Sensore presenza pezzo su nastro caricamento (ingresso) (NC)
+	bI8				AT %I*	:	BOOL;		// Sensore presenza pezzo sotto il trapano (NC)
+	bI9				AT %I*	:	BOOL;		// Sensore presenza pezzo su nastro di uscita (NC)
+	
+	(* analog *)
+
+		
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>
