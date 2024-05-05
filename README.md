@@ -1,7 +1,7 @@
-# Progetto base TwinCAT3 con gestione versionamento
-Progetto di base per TwinCAT3 da utilizare come template per nuovi progetti da gestire tramite Git e GitHub
+# Progetto finale classe 4ELEB: gestione del ciclo di lavorazione in ST con macchine a stati finiti evolute
+Progetto per TwinCAT3 da completare da parte degli studenti della classe 4ELEB A.S. 2023/2024
 
-## Istruzioni per l'uso
+## Istruzioni per l'uso di questo repository
 1. iniziare una sessione su GitHub
 2. creare un *nuovo repository* con le opzioni seguenti:
     1. nel campo **Repository template** selezionare l'opzione **damoreluc/TwinCAT_Base_project**
@@ -10,7 +10,7 @@ Progetto di base per TwinCAT3 da utilizare come template per nuovi progetti da g
     4. selezionare la visibilità del nuovo repository con l'opzione _Public_ o _Private_
     5. completare la creazione del nuovo repository premendo il pulsante **Create repository**
 3. Passare alla pagina `<>Code` del nuovo repository
-4. Clic sul pulsante verde `<>Code` e copiare l'indirizzo del nuovo repository da clonare localmente, ad esempio `https://github.com/damoreluc/TwinCAT_dal_base_project.git`
+4. Clic sul pulsante verde `<>Code` e copiare l'indirizzo del nuovo repository da clonare localmente, ad esempio `https://github.com/damoreluc/4ELEB_CicloLavorazione_ST.git`
 5. nel ***proprio PC***, aprire la cartella principale dei progetti TwinCAT, di solito è `Documenti\TcXaeShell`
 6. da qui avviare un terminale di Windows col comando `clic destro -> Apri nel terminale`
 7. clonare il repository digitando nel terminale il comando 
