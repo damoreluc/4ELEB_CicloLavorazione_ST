@@ -69,7 +69,8 @@ ELSE
 	(* switch - case della MSF *)
 	CASE stStatus.stZ1.eStep OF
 	// To be done...	
-
+	E_Z1_Step.Stop : 
+	
 	
 	ELSE
 			eNewstep :=  E_Z1_Step.NeOrError;
@@ -85,5 +86,11 @@ ELSE
 	
 END_IF	]]></ST>
     </Implementation>
+    <LineIds Name="FB_Z1_FSM">
+      <LineId Id="3" Count="35" />
+      <LineId Id="83" Count="0" />
+      <LineId Id="39" Count="12" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
   </POU>
 </TcPlcObject>
