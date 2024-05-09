@@ -72,9 +72,32 @@ ELSE
 	
 	(* switch - case della MSF *)
 	CASE stStatus.stZ2.eStep OF
-	// To be done...
+    E_Z2_Step.Stop :
+    bQ1 :=  FALSE;
+	bQ2 := FALSE;
+	bErr := FALSE;
+	IF (tMoving > tStopDelay) THEN
+		eNewStep := E_Z2_Step.Ready; 
+	END_IF
 	
+	E_Z2_Step.Ready :
+	bQ1 :=  FALSE;
+	bQ2 := FALSE;
+	bErr := FALSE
+	IF (bStopRequest) THEN 
+		eNewStep := E_Z2_Step.Recovering;
+	END_IF 	
+	IF (NOT(bStopRequest) AND E_Z1_Step.DelayToZ2) THEN
+		eNewStep := E_Z2_Step.WaitZ3Ready;		
+	END_IF
 	
+	E_Z2_Step.WaitZ3Ready :
+	bQ1 :=  FALSE;
+	bQ2 := FALSE;
+	bErr := FALSE	
+	IF (NOT(bStopRequest) AND E_Z1_Step.DelayToZ2) THEN
+		eNewStep := E_Z2_Step.WaitZ3Ready;		
+	END_IF	
 	ELSE
 			eNewstep :=  E_Z2_Step.NeOrError;
 			stStatus.stZ2.eErrorStep :=  E_Z2_Step.Unknown;			
@@ -89,5 +112,25 @@ ELSE
 	
 END_IF	]]></ST>
     </Implementation>
+    <LineIds Name="FB_Z2_FSM">
+      <LineId Id="3" Count="36" />
+      <LineId Id="87" Count="1" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="91" Count="0" />
+      <LineId Id="90" Count="0" />
+      <LineId Id="103" Count="1" />
+      <LineId Id="127" Count="1" />
+      <LineId Id="126" Count="0" />
+      <LineId Id="105" Count="0" />
+      <LineId Id="129" Count="1" />
+      <LineId Id="107" Count="0" />
+      <LineId Id="131" Count="0" />
+      <LineId Id="108" Count="0" />
+      <LineId Id="132" Count="4" />
+      <LineId Id="140" Count="1" />
+      <LineId Id="109" Count="0" />
+      <LineId Id="41" Count="11" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
   </POU>
 </TcPlcObject>

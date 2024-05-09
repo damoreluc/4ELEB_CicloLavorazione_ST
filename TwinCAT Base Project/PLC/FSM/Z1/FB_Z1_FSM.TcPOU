@@ -70,7 +70,8 @@ ELSE
 	CASE stStatus.stZ1.eStep OF
 	// To be done...	
 	E_Z1_Step.Stop : 
-	
+	bQ5 := FALSE;
+	bErr := FALSE;
 	
 	ELSE
 			eNewstep :=  E_Z1_Step.NeOrError;
@@ -89,6 +90,7 @@ END_IF	]]></ST>
     <LineIds Name="FB_Z1_FSM">
       <LineId Id="3" Count="35" />
       <LineId Id="83" Count="0" />
+      <LineId Id="115" Count="0" />
       <LineId Id="39" Count="12" />
       <LineId Id="2" Count="0" />
     </LineIds>
