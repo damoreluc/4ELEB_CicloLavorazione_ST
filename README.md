@@ -25,11 +25,11 @@ Progetto per TwinCAT3 da completare da parte degli studenti della classe 4ELEB A
 10. dal menu `File -> Apri... -> Progetto/Soluzione`, selezionare il progetto appena clonato ed aprirlo. 
 Nel riquadro in basso a destra della finestra di TwinCAT3 XAE verrà indicato il nome del repository locale del progetto e il nome del branch attivo.
 11. Il compito lasciato agli studenti consiste nell'analizzare i diagrammi SFC degli stati delle machine a stati finiti di zona e del coordinatore, scegliere una delle sette MSF e di svilupparne il codice delle strutture `case of` negli FB:
-    - FB_FSM _( coordinatore )_
-    - FB_Z1_FSM _( Zona Z1 )_
-    - FB_Z2_FSM _( Zona Z2 )_
-    - FB_Z3_FSM _( Zona Z3 )_
-    - FB_Z4_FSM _( Zona Z4 )_
-    - FB_Z5_FSM _( Zona Z5 )_
-    - FB_Z6_FSM _( Zona Z6 )_
+    - FB_FSM _( coordinatore - Girotto)_
+    - FB_Z1_FSM _( Zona Z1 - Scrignari, Canovic)_
+    - FB_Z2_FSM _( Zona Z2 - Tuan, Maran)_
+    - FB_Z3_FSM _( Zona Z3 - Domancic, Capano)_
+    - FB_Z4_FSM _( Zona Z4 - Buzimkic, Piran)_
+    - FB_Z5_FSM _( Zona Z5 - Cescutti)_
+    - FB_Z6_FSM _( Zona Z6 - Corbatto)_
 13. procedere con le modifiche del codice come richiesto dal nuovo progetto ed utilizzare i comandi della sezione **Team Explorer** di TwinCAT3 XAE per il commit e la sincronizzazione col repository remoto in GitHub.
