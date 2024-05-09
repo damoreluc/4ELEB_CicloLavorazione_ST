@@ -13,7 +13,18 @@ VAR_IN_OUT
 	stStatus	:	ST_FSM_Status;	
 END_VAR
 VAR_OUTPUT
+	eStep		:	E_Z3_Step;
+	tStepTime	:	TIME;
+	eErrStep	:	E_Z3_Step;
+	nErrId		:	DINT;
 	// Digital Outputs
+	bFixedGreen		:	BOOL;	// machine running light green indicator
+	bBlinkingGreen	:	BOOL;	// machine stopping blinking green indicator
+	bFixedRed		:	BOOL;	// machine stopped light red indicator
+	bBlinkingRed	:	BOOL;	// blinking red indicator
+	bFixedOrange	:	BOOL;	// recovery light orange indicator	
+	bBlinkingOrange	:	BOOL;	// blinking orange indicator
+	
 	bQ6			:	BOOL;
 	bQ7			:	BOOL;	
 	bErr		:	BOOL;
@@ -64,7 +75,135 @@ ELSE
 	(* switch - case della MSF *)
 	CASE stStatus.stZ3.eStep OF
 	// To be done...
+	E_Z3_Step.NeOrError :
+			// on entry action
+			IF NOT bEntryact THEN
+				stStatus.bFailure := TRUE;
+				bEntryact := TRUE;
+			END_IF
+			
+			// body
+			bFixedGreen := TRUE;
+			bFixedRed := FALSE;
+			bBlinkingRed := TRUE;
+			bFixedOrange := FALSE;
+			bBlinkingOrange := FALSE;
+			
+			bQ6 := FALSE;
+			bQ7 := FALSE;
+			bErr := TRUE;
+					
+			
+			// next state transition
+			IF ST_FSM_Ctrl.bEnable THEN
+				IF ST_FSM_Cmd.bAck THEN
+					eNewStep := E_Z3_Step.Recovering;
+				END_IF
+			END_IF
+		
+			// on exit action
+			IF eNewStep <> E_Z3_Step.NoStep THEN
+				nErrId := 0;
+				eErrStep := E_Z3_Step.NoStep;
+			END_IF
 	
+			// Recovering ---------------------------------			
+		E_Z3_Step.Recovering :
+			// on entry action
+			IF NOT bEntryact THEN
+				bEntryact := TRUE;
+			END_IF
+			
+			// body
+			bFixedGreen := TRUE;
+			bFixedRed := FALSE;
+			bBlinkingRed := FALSE;
+			bFixedOrange := FALSE;
+			bBlinkingOrange := TRUE;
+			
+			bQ6 := FALSE;
+			bQ7 := FALSE;
+			bErr := FALSE;
+			
+			// next state transition
+			IF stCtrl.bEnable THEN
+				IF NOT(stStatus.bFailure) THEN
+					IF (bConveyorLoaded AND stIn.bFc1 AND stIn.bFc3) OR ( NOT(bConveyorLoaded) AND stIn.bFc3 ) OR (tStepTime > stParams.tMaxTravelTime) THEN
+						eNewStep := E_Step.Stopping;
+					END_IF
+				END_IF				
+			END_IF
+			
+			// on exit action
+			IF eNewStep <> E_Step.NoStep THEN
+				stStatus.bFailure := FALSE;
+			END_IF			
+
+		// Stopping -----------------------------------
+		E_Step.Stopping :
+			// on entry action
+			IF NOT bEntryact THEN
+				bEntryact := TRUE;
+			END_IF
+			
+			// body
+			bFixedGreen := FALSE;
+			bBlinkingGreen := TRUE;
+			bFixedRed := FALSE;
+			bBlinkingRed := FALSE;
+			bFixedOrange := FALSE;
+			bBlinkingOrange := FALSE;
+			
+			bQ1 := FALSE;
+			bQ2 := FALSE;
+			bQ3 := FALSE;
+			bQ4 := FALSE;
+			
+			// next state transition
+			IF tStepTime >= stParams.tStoppingDelay THEN
+				eNewStep := E_Step.Stop;
+			END_IF
+			
+			// on exit action
+			IF eNewStep <> E_Step.NoStep THEN
+				;
+			END_IF
+			
+		// Stop ---------------------------------------
+		E_Step.Stop :
+			// on entry action
+			IF NOT bEntryact THEN
+				bStopRequest := FALSE;
+				bConveyorLoaded := FALSE;
+				bEntryact := TRUE;
+			END_IF
+			
+			// body
+			bFixedGreen := FALSE;
+			bBlinkingGreen := FALSE;
+			bFixedRed := TRUE;
+			bBlinkingRed := FALSE;
+			bFixedOrange := FALSE;
+			bBlinkingOrange := FALSE;
+			
+			bQ1 := FALSE;
+			bQ2 := FALSE;
+			bQ3 := FALSE;
+			bQ4 := FALSE;
+			
+			// next state transition
+			IF NOT stCmd.bStop AND stCmd.bStart THEN
+				IF NOT(stIn.bFc3) THEN
+					eNewStep := E_Step.RecoverPunch;
+				ELSE
+					eNewStep := E_Step.WaitObject;
+				END_IF
+			END_IF
+			
+			// on exit action
+			IF eNewStep <> E_Step.NoStep THEN
+				;
+			END_IF
 	
 	ELSE
 			eNewstep :=  E_Z3_Step.NeOrError;
@@ -80,5 +219,16 @@ ELSE
 	
 END_IF	]]></ST>
     </Implementation>
+    <LineIds Name="FB_Z3_FSM">
+      <LineId Id="3" Count="32" />
+      <LineId Id="79" Count="29" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="121" Count="16" />
+      <LineId Id="139" Count="78" />
+      <LineId Id="120" Count="0" />
+      <LineId Id="37" Count="12" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
   </POU>
 </TcPlcObject>
