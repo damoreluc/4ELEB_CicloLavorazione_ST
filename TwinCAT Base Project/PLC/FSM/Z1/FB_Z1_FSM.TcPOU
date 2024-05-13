@@ -35,6 +35,7 @@ VAR
 	fbRtI5			:	R_TRIG;
 	fbRtI7			:	R_TRIG;
 	bStopRequest	:	BOOL;	
+	stZ1: INT;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -78,7 +79,7 @@ ELSE
 	bQ5 := FALSE;
 	bErr := FALSE;
 	
-	IF tStepTime > tStopDelay AND bStart THEN
+	IF (stStatus.tStepTime > stParams.tStopDelay AND bStart) THEN
 		eNewStep := E_Z1_Step.Ready;
 	END_IF
 	
@@ -86,7 +87,7 @@ ELSE
 	bQ5 := FALSE;
 	bErr := FALSE;
 	
-	IF NOT(bStopRequest) AND fbRtI7 THEN
+	IF (NOT(bStopRequest) AND fbRtI7.Q) THEN
 		eNewStep := E_Z1_Step.DelayToFeeding;
 	ELSIF bStopRequest THEN
 		eNewStep := E_Z1_Step.Stop;
@@ -96,9 +97,9 @@ ELSE
 	bQ5 := FALSE;
 	bErr := FALSE;
 	
-	IF tStepTime > tWaiting AND E_Z2_Step.Ready THEN
+	IF (stStatus.stZ1.tStepTime > stParams.tWaiting AND E_Z2_Step.Ready) THEN
 		eNewStep := E_Z1_Step.Loading;
-	ELSIF bStopRequest THEN
+	ELSIF (bStopRequest) THEN
 		eNewStep := E_Z1_Step.Stop;
 	END_IF
 	
@@ -107,9 +108,9 @@ ELSE
 	bQ5 := TRUE;
 	bErr := FALSE;
 	
-	IF tStepTime < tTravelTime AND fbRtI5 THEN
+	IF (stStatus.stZ1.tStepTime < stParams.tTravelTime AND fbRtI5.Q) THEN
 		eNewStep := E_Z1_Step.DelayToZ2;
-	ELSIF tStepTime > tTravelTime THEN
+	ELSIF (stStatus.stZ1.tStepTime > stParams.tTravelTime) THEN
 		eNewStep := E_Z1_Step.NeOrError;
 	END_IF
 	
@@ -118,9 +119,9 @@ ELSE
 	bQ5 := TRUE;
 	bErr := FALSE;
 	
-	IF tStepTime >= tTravelTime AND NOT(fbRtI5) THEN
+	IF (stStatus.stZ1.tStepTime >= stParams.tTravelTime AND NOT(fbRtI5.Q)) THEN
 		eNewStep := E_Z1_Step.Done;
-	ELSIF tStepTime >= tTravelTime AND fbRtI5 THEN
+	ELSIF (stStatus.stZ1.tStepTime >= stParams.tTravelTime AND fbRtI5.Q) THEN
 		eNewStep := E_Z1_Step.NeOrError;
 	END_IF
 	
@@ -136,7 +137,7 @@ ELSE
 	bQ5 := FALSE;
 	bErr := TRUE;
 	
-	IF bAck THEN
+	IF (bAck) THEN
 		eNewStep := E_Z1_Step.Recovering;
 	END_IF
 	
