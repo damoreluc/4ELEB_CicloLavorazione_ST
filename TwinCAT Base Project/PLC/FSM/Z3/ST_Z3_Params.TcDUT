@@ -6,6 +6,7 @@ STRUCT
 	tMilling	:	TIME	:= T#6S;	// durata della fase di fresatura
 	tDelayToZ4	:	TIME	:= T#3S;	// ritardo per arrivare a Z4
 	tStopDelay	:	TIME	:= T#1S;	// permanenza nello stato Stop
+	tRecovering	: TIME		:= T#2S; 	// tempo di uscita dallo stato di Recovering
 END_STRUCT
 END_TYPE
 ]]></Declaration>

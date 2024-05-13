@@ -8,9 +8,14 @@ VAR_INPUT
 	bStop		:	BOOL;
 	bI6			:	BOOL;
 	stParams	:	ST_Z3_Params;	
+	stIn		: 	ST_FSM_In;
 END_VAR
 VAR_IN_OUT
-	stStatus	:	ST_FSM_Status;	
+	stStatus	:	ST_FSM_Status;
+	stStep		:   E_Z3_Step;
+	stZ2Step	:   E_Z2_Step;	
+	stCmd		:	ST_FSM_Cmd;
+	stCtrl		:	ST_FSM_Ctrl;
 END_VAR
 VAR_OUTPUT
 	eStep		:	E_Z3_Step;
@@ -18,13 +23,6 @@ VAR_OUTPUT
 	eErrStep	:	E_Z3_Step;
 	nErrId		:	DINT;
 	// Digital Outputs
-	bFixedGreen		:	BOOL;	// machine running light green indicator
-	bBlinkingGreen	:	BOOL;	// machine stopping blinking green indicator
-	bFixedRed		:	BOOL;	// machine stopped light red indicator
-	bBlinkingRed	:	BOOL;	// blinking red indicator
-	bFixedOrange	:	BOOL;	// recovery light orange indicator	
-	bBlinkingOrange	:	BOOL;	// blinking orange indicator
-	
 	bQ6			:	BOOL;
 	bQ7			:	BOOL;	
 	bErr		:	BOOL;
@@ -38,7 +36,10 @@ VAR
 	
 	fbRtStop		:	R_TRIG;
 	fbRtI6			:	R_TRIG;
-	bStopRequest	:	BOOL;	
+	bStopRequest	:	BOOL;
+
+	// object on conveyor
+	bConveyorLoaded	:	BOOL;	
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -83,20 +84,14 @@ ELSE
 			END_IF
 			
 			// body
-			bFixedGreen := TRUE;
-			bFixedRed := FALSE;
-			bBlinkingRed := TRUE;
-			bFixedOrange := FALSE;
-			bBlinkingOrange := FALSE;
-			
 			bQ6 := FALSE;
 			bQ7 := FALSE;
 			bErr := TRUE;
 					
 			
 			// next state transition
-			IF ST_FSM_Ctrl.bEnable THEN
-				IF ST_FSM_Cmd.bAck THEN
+			IF stCtrl.bEnable THEN
+				IF stCmd.bAck THEN
 					eNewStep := E_Z3_Step.Recovering;
 				END_IF
 			END_IF
@@ -114,13 +109,7 @@ ELSE
 				bEntryact := TRUE;
 			END_IF
 			
-			// body
-			bFixedGreen := TRUE;
-			bFixedRed := FALSE;
-			bBlinkingRed := FALSE;
-			bFixedOrange := FALSE;
-			bBlinkingOrange := TRUE;
-			
+			// body	
 			bQ6 := FALSE;
 			bQ7 := FALSE;
 			bErr := FALSE;
@@ -128,49 +117,19 @@ ELSE
 			// next state transition
 			IF stCtrl.bEnable THEN
 				IF NOT(stStatus.bFailure) THEN
-					IF (bConveyorLoaded AND stIn.bFc1 AND stIn.bFc3) OR ( NOT(bConveyorLoaded) AND stIn.bFc3 ) OR (tStepTime > stParams.tMaxTravelTime) THEN
-						eNewStep := E_Step.Stopping;
+					IF (tStepTime > stParams.tRecovering) THEN
+						eNewStep := E_Z3_Step.Stop;
 					END_IF
 				END_IF				
 			END_IF
 			
 			// on exit action
-			IF eNewStep <> E_Step.NoStep THEN
+			IF eNewStep <> E_Z3_Step.NoStep THEN
 				stStatus.bFailure := FALSE;
 			END_IF			
-
-		// Stopping -----------------------------------
-		E_Step.Stopping :
-			// on entry action
-			IF NOT bEntryact THEN
-				bEntryact := TRUE;
-			END_IF
-			
-			// body
-			bFixedGreen := FALSE;
-			bBlinkingGreen := TRUE;
-			bFixedRed := FALSE;
-			bBlinkingRed := FALSE;
-			bFixedOrange := FALSE;
-			bBlinkingOrange := FALSE;
-			
-			bQ1 := FALSE;
-			bQ2 := FALSE;
-			bQ3 := FALSE;
-			bQ4 := FALSE;
-			
-			// next state transition
-			IF tStepTime >= stParams.tStoppingDelay THEN
-				eNewStep := E_Step.Stop;
-			END_IF
-			
-			// on exit action
-			IF eNewStep <> E_Step.NoStep THEN
-				;
-			END_IF
 			
 		// Stop ---------------------------------------
-		E_Step.Stop :
+		E_Z3_Step.Stop :
 			// on entry action
 			IF NOT bEntryact THEN
 				bStopRequest := FALSE;
@@ -178,33 +137,172 @@ ELSE
 				bEntryact := TRUE;
 			END_IF
 			
-			// body
-			bFixedGreen := FALSE;
-			bBlinkingGreen := FALSE;
-			bFixedRed := TRUE;
-			bBlinkingRed := FALSE;
-			bFixedOrange := FALSE;
-			bBlinkingOrange := FALSE;
-			
-			bQ1 := FALSE;
-			bQ2 := FALSE;
-			bQ3 := FALSE;
-			bQ4 := FALSE;
+			// body	
+			bQ6 := FALSE;
+			bQ7 := FALSE;
+			bErr:= FALSE;
 			
 			// next state transition
-			IF NOT stCmd.bStop AND stCmd.bStart THEN
-				IF NOT(stIn.bFc3) THEN
-					eNewStep := E_Step.RecoverPunch;
-				ELSE
-					eNewStep := E_Step.WaitObject;
+			IF NOT ST_FSM_Cmd.bStop AND ST_FSM_Cmd.bStart THEN
+				IF (tStepTime > stParams.tRecovering) THEN
+					eNewStep := E_Z3_Step.Ready;
 				END_IF
 			END_IF
 			
 			// on exit action
-			IF eNewStep <> E_Step.NoStep THEN
+			IF eNewStep <> E_Z3_Step.NoStep THEN
 				;
 			END_IF
-	
+			
+		// Ready ---------------------------------------
+		E_Z3_Step.Ready :
+			// on entry action
+			IF NOT bEntryact THEN
+				bStopRequest := FALSE;
+				bConveyorLoaded := FALSE;
+				bEntryact := TRUE;
+			END_IF
+			
+			// body	
+			bQ6 := FALSE;
+			bQ7 := FALSE;
+			bErr:= FALSE;
+			
+			// next state transition
+			IF bStopRequest THEN 
+				eNewStep := E_Z3_Step.Stop;
+			ELSIF stStatus.stZ2.eStep=E_Z2_Step.WaitZ3Ready THEN
+				eNewStep := E_Z3_Step.MoveToMill;
+			END_IF
+			
+			// on exit action
+			IF eNewStep <> E_Z3_Step.NoStep THEN
+				;
+			END_IF
+			
+			// MoveToMill ---------------------------------------
+		E_Z3_Step.MoveToMill :
+			// on entry action
+			IF NOT bEntryact THEN
+				bStopRequest := FALSE;
+				bConveyorLoaded := FALSE;
+				bEntryact := TRUE;
+			END_IF
+			
+			// body	
+			bQ6 := NOT(stIn.bI6);
+			bQ7 := FALSE;
+			bErr:= FALSE;
+			
+			// next state transition
+			IF bStopRequest THEN 
+				eNewStep := E_Z3_Step.Recovering;
+			ELSIF stIn.bI6 THEN
+				eNewStep := E_Z3_Step.MoveToMill;
+			END_IF
+			
+			// on exit action
+			IF eNewStep <> E_Z3_Step.NoStep THEN
+				;
+			END_IF
+						
+
+		// Milling ---------------------------------------
+		E_Z3_Step.Milling :
+			// on entry action
+			IF NOT bEntryact THEN
+				bStopRequest := FALSE;
+				bConveyorLoaded := FALSE;
+				bEntryact := TRUE;
+			END_IF
+			
+			// body	
+			bQ6 := FALSE;
+			bQ7 := TRUE;
+			bErr:= FALSE;
+			
+			// next state transition
+			IF tStepTime > stParams.tMilling THEN 
+				eNewStep := E_Z3_Step.WaitZ4Ready;
+			END_IF
+			
+			// on exit action
+			IF eNewStep <> E_Z3_Step.NoStep THEN
+				;
+			END_IF
+			
+		// WaitZ4Ready ---------------------------------------
+		E_Z3_Step.WaitZ4Ready :
+			// on entry action
+			IF NOT bEntryact THEN
+				bStopRequest := FALSE;
+				bConveyorLoaded := FALSE;
+				bEntryact := TRUE;
+			END_IF
+			
+			// body	
+			bQ6 := FALSE;
+			bQ7 := FALSE;
+			bErr:= FALSE;
+			
+			// next state transition
+			IF stStatus.stZ3.eStep=E_Z3_Step.WaitZ4Ready THEN 
+				eNewStep := E_Z3_Step.MoveToZ4;
+			END_IF
+			
+			// on exit action
+			IF eNewStep <> E_Z3_Step.NoStep THEN
+				;
+			END_IF
+			
+		// MoveToZ4 ---------------------------------------
+		E_Z3_Step.MoveToZ4 :
+			// on entry action
+			IF NOT bEntryact THEN
+				bStopRequest := FALSE;
+				bConveyorLoaded := FALSE;
+				bEntryact := TRUE;
+			END_IF
+			
+			// body	
+			bQ6 := FALSE;
+			bQ7 := TRUE;
+			bErr:= FALSE;
+			
+			// next state transition
+			IF tStepTime > stParams.tDelayToZ4 THEN 
+				eNewStep := E_Z3_Step.Done;
+			END_IF
+			
+			// on exit action
+			IF eNewStep <> E_Z3_Step.NoStep THEN
+				;
+			END_IF
+			
+		// Done ---------------------------------------
+		E_Z3_Step.Done :
+			// on entry action
+			IF NOT bEntryact THEN
+				bStopRequest := FALSE;
+				bConveyorLoaded := FALSE;
+				bEntryact := TRUE;
+			END_IF
+			
+			// body	
+			bQ6 := FALSE;
+			bQ7 := FALSE;
+			bErr:= FALSE;
+			
+			// next state transition
+				
+			eNewStep := E_Z3_Step.Ready;
+			
+			
+			// on exit action
+			IF eNewStep <> E_Z3_Step.NoStep THEN
+				;
+			END_IF
+			
 	ELSE
 			eNewstep :=  E_Z3_Step.NeOrError;
 			stStatus.stZ3.eErrorStep :=  E_Z3_Step.Unknown;			
@@ -221,13 +319,48 @@ END_IF	]]></ST>
     </Implementation>
     <LineIds Name="FB_Z3_FSM">
       <LineId Id="3" Count="32" />
-      <LineId Id="79" Count="29" />
+      <LineId Id="79" Count="7" />
+      <LineId Id="93" Count="15" />
       <LineId Id="78" Count="0" />
       <LineId Id="36" Count="0" />
-      <LineId Id="121" Count="16" />
-      <LineId Id="139" Count="78" />
+      <LineId Id="121" Count="7" />
+      <LineId Id="135" Count="2" />
+      <LineId Id="139" Count="13" />
+      <LineId Id="183" Count="10" />
+      <LineId Id="260" Count="1" />
+      <LineId Id="204" Count="5" />
+      <LineId Id="212" Count="5" />
       <LineId Id="120" Count="0" />
-      <LineId Id="37" Count="12" />
+      <LineId Id="262" Count="0" />
+      <LineId Id="264" Count="15" />
+      <LineId Id="289" Count="0" />
+      <LineId Id="291" Count="0" />
+      <LineId Id="293" Count="0" />
+      <LineId Id="283" Count="4" />
+      <LineId Id="263" Count="0" />
+      <LineId Id="294" Count="0" />
+      <LineId Id="296" Count="23" />
+      <LineId Id="295" Count="0" />
+      <LineId Id="321" Count="0" />
+      <LineId Id="346" Count="0" />
+      <LineId Id="345" Count="0" />
+      <LineId Id="322" Count="15" />
+      <LineId Id="340" Count="4" />
+      <LineId Id="320" Count="0" />
+      <LineId Id="347" Count="0" />
+      <LineId Id="349" Count="16" />
+      <LineId Id="368" Count="4" />
+      <LineId Id="348" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="374" Count="21" />
+      <LineId Id="373" Count="0" />
+      <LineId Id="396" Count="0" />
+      <LineId Id="399" Count="14" />
+      <LineId Id="415" Count="0" />
+      <LineId Id="421" Count="0" />
+      <LineId Id="416" Count="4" />
+      <LineId Id="397" Count="1" />
+      <LineId Id="38" Count="11" />
       <LineId Id="2" Count="0" />
     </LineIds>
   </POU>
