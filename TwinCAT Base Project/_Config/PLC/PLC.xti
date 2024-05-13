@@ -1,15 +1,224 @@
 <?xml version="1.0"?>
-<TcSmItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4024.54" ClassName="CNestedPlcProjDef">
+<TcSmItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4024.40" ClassName="CNestedPlcProjDef">
 	<Project GUID="{E09543CB-5055-4747-8DFB-7FD68CD09779}" Name="PLC" PrjFilePath="..\..\PLC\PLC.plcproj" TmcFilePath="..\..\PLC\PLC.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-		<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2">
+		<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="PLC\PLC.tmc" TmcHash="{480C554B-2B80-DE26-07F4-B940505566B5}">
 			<Name>PLC Instance</Name>
 			<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
+			<Vars VarGrpType="1">
+				<Name>PlcTask Inputs</Name>
+				<Var>
+					<Name>MAIN.stRawIn.bEmergency</Name>
+					<Comment><![CDATA[ emergenza (NC)]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawIn.bStartButton</Name>
+					<Comment><![CDATA[ pulsante di start (NO)]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawIn.bStopButton</Name>
+					<Comment><![CDATA[ pulsante di stop (NC)]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawIn.bAckButton</Name>
+					<Comment><![CDATA[ pulsante di riconoscimento allarmi (NO)]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawIn.bI1</Name>
+					<Comment><![CDATA[ Fine corsa anteriore slider 1 (NO)]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawIn.bI2</Name>
+					<Comment><![CDATA[ Fine corsa posteriore slider 1 (NO)]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawIn.bI3</Name>
+					<Comment><![CDATA[ Fine corsa anteriore slider 2 (NO)]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawIn.bI4</Name>
+					<Comment><![CDATA[ Fine corsa posteriore slider 2 (NO)]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawIn.bI5</Name>
+					<Comment><![CDATA[ Sensore ingresso slider 1 (NC)]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawIn.bI6</Name>
+					<Comment><![CDATA[ Sensore presenza pezzo sotto la fresa (NC)	]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawIn.bI7</Name>
+					<Comment><![CDATA[ Sensore presenza pezzo su nastro caricamento (ingresso) (NC)]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawIn.bI8</Name>
+					<Comment><![CDATA[ Sensore presenza pezzo sotto il trapano (NC)]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawIn.bI9</Name>
+					<Comment><![CDATA[ Sensore presenza pezzo su nastro di uscita (NC)]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+			</Vars>
+			<Vars VarGrpType="2" AreaNo="1">
+				<Name>PlcTask Outputs</Name>
+				<Var>
+					<Name>MAIN.fbFsm.fbWriteOut.stRawOut.bYellow</Name>
+					<Comment><![CDATA[ luce gialla]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbFsm.fbWriteOut.stRawOut.bGreen</Name>
+					<Comment><![CDATA[ luce verde]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbFsm.fbWriteOut.stRawOut.bRed</Name>
+					<Comment><![CDATA[ luce rossa	]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbFsm.fbWriteOut.stRawOut.bQ1</Name>
+					<Comment><![CDATA[ Rientro slider 1]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbFsm.fbWriteOut.stRawOut.bQ2</Name>
+					<Comment><![CDATA[ Estensione slider 1]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbFsm.fbWriteOut.stRawOut.bQ3</Name>
+					<Comment><![CDATA[ Rientro slider 2]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbFsm.fbWriteOut.stRawOut.bQ4</Name>
+					<Comment><![CDATA[ Estensione slider 2]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbFsm.fbWriteOut.stRawOut.bQ5</Name>
+					<Comment><![CDATA[ Motore nastro caricamento (ingresso zona Z1)]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbFsm.fbWriteOut.stRawOut.bQ6</Name>
+					<Comment><![CDATA[ Motore nastro zona fresa (Z3)]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbFsm.fbWriteOut.stRawOut.bQ7</Name>
+					<Comment><![CDATA[ Motore fresa]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbFsm.fbWriteOut.stRawOut.bQ8</Name>
+					<Comment><![CDATA[ Motore nastro zona trapano (Z4)]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbFsm.fbWriteOut.stRawOut.bQ9</Name>
+					<Comment><![CDATA[ Motore trapano]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbFsm.fbWriteOut.stRawOut.bQ10</Name>
+					<Comment><![CDATA[ Motore nastro scarico (uscita zona Z6)	]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawOut.bYellow</Name>
+					<Comment><![CDATA[ luce gialla]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawOut.bGreen</Name>
+					<Comment><![CDATA[ luce verde]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawOut.bRed</Name>
+					<Comment><![CDATA[ luce rossa	]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawOut.bQ1</Name>
+					<Comment><![CDATA[ Rientro slider 1]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawOut.bQ2</Name>
+					<Comment><![CDATA[ Estensione slider 1]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawOut.bQ3</Name>
+					<Comment><![CDATA[ Rientro slider 2]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawOut.bQ4</Name>
+					<Comment><![CDATA[ Estensione slider 2]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawOut.bQ5</Name>
+					<Comment><![CDATA[ Motore nastro caricamento (ingresso zona Z1)]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawOut.bQ6</Name>
+					<Comment><![CDATA[ Motore nastro zona fresa (Z3)]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawOut.bQ7</Name>
+					<Comment><![CDATA[ Motore fresa]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawOut.bQ8</Name>
+					<Comment><![CDATA[ Motore nastro zona trapano (Z4)]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawOut.bQ9</Name>
+					<Comment><![CDATA[ Motore trapano]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.stRawOut.bQ10</Name>
+					<Comment><![CDATA[ Motore nastro scarico (uscita zona Z6)	]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+			</Vars>
 			<Contexts>
 				<Context>
-					<Id>1</Id>
-					<Name>Default</Name>
+					<Id NeedCalleeCall="true">0</Id>
+					<Name>PlcTask</Name>
+					<ManualConfig>
+						<OTCID>#x02010030</OTCID>
+					</ManualConfig>
+					<Priority>20</Priority>
+					<CycleTime>10000000</CycleTime>
 				</Context>
 			</Contexts>
+			<TaskPouOids>
+				<TaskPouOid Prio="20" OTCID="#x08502001"/>
+			</TaskPouOids>
 		</Instance>
 	</Project>
 </TcSmItem>

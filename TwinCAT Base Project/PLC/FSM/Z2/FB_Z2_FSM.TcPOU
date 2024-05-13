@@ -59,6 +59,7 @@ ELSE
 	END_IF; 
 
 	(* disabilitata o avaria *)
+	
 	IF NOT bEnable THEN
 		eNewstep := E_Z2_Step.NeOrError;
 	END_IF;
@@ -113,7 +114,9 @@ ELSE
 END_IF	]]></ST>
     </Implementation>
     <LineIds Name="FB_Z2_FSM">
-      <LineId Id="3" Count="36" />
+      <LineId Id="3" Count="21" />
+      <LineId Id="176" Count="0" />
+      <LineId Id="25" Count="14" />
       <LineId Id="87" Count="1" />
       <LineId Id="40" Count="0" />
       <LineId Id="91" Count="0" />
