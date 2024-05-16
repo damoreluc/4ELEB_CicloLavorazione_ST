@@ -5,17 +5,13 @@
 VAR_INPUT
 	bEnable		:	BOOL;
 	bAck		:	BOOL;
+	bStart		:	BOOL;
 	bStop		:	BOOL;
 	bI6			:	BOOL;
 	stParams	:	ST_Z3_Params;	
-	stIn		: 	ST_FSM_In;
 END_VAR
 VAR_IN_OUT
 	stStatus	:	ST_FSM_Status;
-	stStep		:   E_Z3_Step;
-	stZ2Step	:   E_Z2_Step;	
-	stCmd		:	ST_FSM_Cmd;
-	stCtrl		:	ST_FSM_Ctrl;
 END_VAR
 VAR_OUTPUT
 	eStep		:	E_Z3_Step;
@@ -90,8 +86,8 @@ ELSE
 					
 			
 			// next state transition
-			IF stCtrl.bEnable THEN
-				IF stCmd.bAck THEN
+			IF bEnable THEN
+				IF bAck THEN
 					eNewStep := E_Z3_Step.Recovering;
 				END_IF
 			END_IF
@@ -115,7 +111,7 @@ ELSE
 			bErr := FALSE;
 			
 			// next state transition
-			IF stCtrl.bEnable THEN
+			IF bEnable THEN
 				IF NOT(stStatus.bFailure) THEN
 					IF (tStepTime > stParams.tRecovering) THEN
 						eNewStep := E_Z3_Step.Stop;
@@ -143,7 +139,7 @@ ELSE
 			bErr:= FALSE;
 			
 			// next state transition
-			IF NOT StCmd.bStop AND StCmd.bStart THEN
+			IF NOT bStop AND bStart THEN
 				IF (tStepTime > stParams.tStopDelay) THEN
 					eNewStep := E_Z3_Step.Ready;
 				END_IF
@@ -190,14 +186,14 @@ ELSE
 			END_IF
 			
 			// body	
-			bQ6 := NOT(stIn.bI6);
+			bQ6 := NOT(bI6);
 			bQ7 := FALSE;
 			bErr:= FALSE;
 			
 			// next state transition
 			IF bStopRequest THEN 
 				eNewStep := E_Z3_Step.Recovering;
-			ELSIF stIn.bI6 THEN
+			ELSIF bI6 THEN
 				eNewStep := E_Z3_Step.MoveToMill;
 			END_IF
 			
