@@ -51,6 +51,9 @@
     <Compile Include="FSM\Coordinator\FB_FSM_Main.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="FSM\Coordinator\FCs\FC_AllError.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="FSM\Coordinator\FCs\FC_AllStopped.TcPOU">
       <SubType>Code</SubType>
     </Compile>

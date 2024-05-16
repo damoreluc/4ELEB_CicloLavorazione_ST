@@ -12,8 +12,13 @@ VAR_IN_OUT
 	stStatus	:	ST_FSM_Status;	
 END_VAR
 VAR_OUTPUT	
+	eStep		:	E_FSM_Step;
+	tStepTime	:	TIME;
+	eErrStep	:	E_FSM_Step;
+	nErrId		:	DINT;
 	// Digital Outputs
 	stOut		:	ST_FSM_Out;	
+	
 END_VAR
 VAR
 	// FSM internal variables
@@ -67,7 +72,34 @@ ELSE
 
 	// 2. The main switch-case ---------------------------------------------------
 	CASE stStatus.eStep OF
-    // to be done...
+    E_FSM_Step.NeOrError :
+			// on entry action
+			IF NOT bEntryact THEN
+				stStatus.bFailure := TRUE;
+				bEntryact := TRUE;
+			END_IF
+			
+			// body
+			stOut.bFixedGreen := TRUE;
+			stOut.bBlinkingGreen := FALSE;
+			stOut.bFixedRed := FALSE;
+			stOut.bBlinkingRed := FALSE;
+			stOut.bFixedYellow := FALSE;
+			stOut.bBlinkingYellow := FALSE;
+					
+			
+			// next state transition
+			IF stCtrl.bEnable THEN
+				IF stCmd.bAck THEN
+					eNewStep := E_Z3_Step.Recovering;
+				END_IF
+			END_IF
+		
+			// on exit action
+			IF eNewStep <> E_Z3_Step.NoStep THEN
+				nErrId := 0;
+				eErrStep := E_Z3_Step.NoStep;
+			END_IF
 						
 	ELSE
 		// this happens also if we forget to code one step 
@@ -84,5 +116,13 @@ ELSE
 	
 END_IF]]></ST>
     </Implementation>
+    <LineIds Name="FB_FSM">
+      <LineId Id="3" Count="34" />
+      <LineId Id="82" Count="9" />
+      <LineId Id="106" Count="3" />
+      <LineId Id="93" Count="12" />
+      <LineId Id="38" Count="14" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
   </POU>
 </TcPlcObject>

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FC_AllError" Id="{baad097d-0e52-0087-0378-5474cb8c6d28}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION FC_AllError : BOOL
+VAR_INPUT
+	stStatus	:	ST_FSM_Status;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[FC_AllError := (stStatus.stZ1.eStep = E_Z1_Step.NeOrError) AND
+                 (stStatus.stZ2.eStep = E_Z2_Step.NeOrError) AND
+                 (stStatus.stZ3.eStep = E_Z3_Step.NeOrError) AND	
+                 (stStatus.stZ4.eStep = E_Z4_Step.NeOrError) AND
+                 (stStatus.stZ5.eStep = E_Z5_Step.NeOrError) AND	
+                 (stStatus.stZ6.eStep = E_Z6_Step.NeOrError);]]></ST>
+    </Implementation>
+    <LineIds Name="FC_AllError">
+      <LineId Id="8" Count="4" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
