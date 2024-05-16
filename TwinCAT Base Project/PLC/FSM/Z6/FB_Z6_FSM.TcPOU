@@ -77,7 +77,7 @@ ELSE
 	bQ10	:=	FALSE;
 	bErr	:= 	FALSE;
 	
-	IF (NOT(bStopRequest) AND E_Z5_Step.WaitZ6Ready) THEN
+	IF (NOT(bStopRequest) AND stStatus.stZ5.eStep = E_Z5_Step.WaitZ6Ready) THEN
 		eNewStep	:=	E_Z6_Step.Loading;
 	ELSIF bStopRequest THEN
 		eNewStep := E_Z6_Step.Stop;
