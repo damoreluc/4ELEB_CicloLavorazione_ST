@@ -135,7 +135,7 @@ ELSE
 	END_IF 	
 	// exit action
 	
-	 //MoveForward
+	//MoveForward
     E_Z2_Step.MoveForward :
 	// entry action
 
@@ -144,27 +144,42 @@ ELSE
 	bQ2 := NOT(bI1);
 	bErr := FALSE;
 	//transition from MoveForward to MoveBackward
-	IF (stStatus.tStepTime > stParams.tStopDelay) THEN
-		eNewStep := E_Z2_Step.Ready; 
+	IF () THEN
+		eNewStep := E_Z2_Step.MoveBackward; 
 	END_IF
 	// exit action
-				IF eNewStep <> E_Z2_Step.NoStep THEN
-				stStatus.nErrorID := 0;
-				stStatus.eErrorStep := E_Z2_Step.NoStep;
+
+	//MoveBackward
+    E_Z2_Step.MoveBackward :
+	// entry action
+
+	//body
+    bQ1 :=  NOT(bI2);
+	bQ2 := FALSE;
+	bErr := FALSE;
+	//transition from MoveBackward to Done
+	IF () THEN
+		eNewStep := E_Z2_Step.Done; 
+	END_IF
+	// exit action
+
+   //Done
+    E_Z2_Step.Done :
+	// entry action
+    IF NOT bEntryact THEN
+	bStopRequest := FALSE;
+	bConveyorLoaded := FALSE;
+	bEntryact := TRUE;
 			END_IF
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	//body
+    bQ1 :=  FALSE;
+	bQ2 :=  FALSE;
+	bErr := FALSE;
+	//transition from MoveBackward to Done
+		eNewStep := E_Z2_Step.Ready; 
+	// exit action
+		IF eNewStep <> E_Z2_Step.NoStep THEN;
+			END_IF
 	ELSE
 			eNewstep :=  E_Z2_Step.NeOrError;
 			stStatus.stZ2.eErrorStep :=  E_Z2_Step.Unknown;			
@@ -230,8 +245,16 @@ END_IF	]]></ST>
       <LineId Id="252" Count="0" />
       <LineId Id="254" Count="0" />
       <LineId Id="269" Count="2" />
-      <LineId Id="275" Count="12" />
-      <LineId Id="255" Count="13" />
+      <LineId Id="275" Count="9" />
+      <LineId Id="255" Count="0" />
+      <LineId Id="288" Count="12" />
+      <LineId Id="256" Count="0" />
+      <LineId Id="301" Count="2" />
+      <LineId Id="316" Count="3" />
+      <LineId Id="304" Count="5" />
+      <LineId Id="311" Count="0" />
+      <LineId Id="313" Count="1" />
+      <LineId Id="268" Count="0" />
       <LineId Id="41" Count="11" />
       <LineId Id="2" Count="0" />
     </LineIds>
