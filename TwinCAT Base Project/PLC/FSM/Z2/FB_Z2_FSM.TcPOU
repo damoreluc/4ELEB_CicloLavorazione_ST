@@ -84,7 +84,7 @@ ELSE
 	E_Z2_Step.Ready :
 	bQ1 :=  FALSE;
 	bQ2 := FALSE;
-	bErr := FALSE
+	bErr := FALSE;
 	IF (bStopRequest) THEN 
 		eNewStep := E_Z2_Step.Recovering;
 	END_IF 	
@@ -95,7 +95,7 @@ ELSE
 	E_Z2_Step.WaitZ3Ready :
 	bQ1 :=  FALSE;
 	bQ2 := FALSE;
-	bErr := FALSE	
+	bErr := FALSE;	
 	IF (NOT(bStopRequest) AND E_Z1_Step.DelayToZ2) THEN
 		eNewStep := E_Z2_Step.WaitZ3Ready;		
 	END_IF	
