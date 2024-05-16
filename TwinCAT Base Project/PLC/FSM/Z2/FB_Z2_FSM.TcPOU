@@ -34,6 +34,8 @@ VAR
 	fbRtI2			:	R_TRIG;
 	fbRtI5			:	R_TRIG;
 	bStopRequest	:	BOOL;	
+	tStepTime		:   ST_Z2_Status;
+	tStopDelay		:   ST_Z2_Params;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -77,7 +79,7 @@ ELSE
     bQ1 :=  FALSE;
 	bQ2 := FALSE;
 	bErr := FALSE;
-	IF (tMoving > tStopDelay) THEN
+	IF (stStatus.tStepTime > stParams.tStopDelay) THEN
 		eNewStep := E_Z2_Step.Ready; 
 	END_IF
 	
@@ -88,7 +90,7 @@ ELSE
 	IF (bStopRequest) THEN 
 		eNewStep := E_Z2_Step.Recovering;
 	END_IF 	
-	IF (NOT(bStopRequest) AND E_Z1_Step.DelayToZ2) THEN
+	IF (NOT(bStopRequest) AND stStatus.stZ1.eStep = E_Z1_Step.DelayToZ2) THEN
 		eNewStep := E_Z2_Step.WaitZ3Ready;		
 	END_IF
 	
@@ -96,7 +98,7 @@ ELSE
 	bQ1 :=  FALSE;
 	bQ2 := FALSE;
 	bErr := FALSE;
-	IF (NOT(bStopRequest) AND E_Z1_Step.DelayToZ2) THEN
+	IF (NOT(bStopRequest) AND stStatus.stZ1.eStep = E_Z1_Step.DelayToZ2) THEN
 		eNewStep := E_Z2_Step.WaitZ3Ready;		
 	END_IF	
 	ELSE
