@@ -45,7 +45,7 @@ END_VAR
     <Implementation>
       <ST><![CDATA[IF NOT bInitialized THEN
 	eNewstep :=  E_Z3_Step.NoStep;
-	stStatus.stZ3.eStep :=  E_Z3_Step.Stop;
+	stStatus.stZ3.eStep :=  E_Z3_Step.NeOrError;
 	bEntryact := FALSE;
 	bInitialized := TRUE;	
 	bErr := FALSE;
@@ -143,8 +143,8 @@ ELSE
 			bErr:= FALSE;
 			
 			// next state transition
-			IF NOT ST_FSM_Cmd.bStop AND ST_FSM_Cmd.bStart THEN
-				IF (tStepTime > stParams.tRecovering) THEN
+			IF NOT StCmd.bStop AND StCmd.bStart THEN
+				IF (tStepTime > stParams.tStopDelay) THEN
 					eNewStep := E_Z3_Step.Ready;
 				END_IF
 			END_IF
@@ -246,7 +246,7 @@ ELSE
 			bErr:= FALSE;
 			
 			// next state transition
-			IF stStatus.stZ3.eStep=E_Z3_Step.WaitZ4Ready THEN 
+			IF stStatus.stZ4.eStep=E_Z4_Step.Ready THEN 
 				eNewStep := E_Z3_Step.MoveToZ4;
 			END_IF
 			

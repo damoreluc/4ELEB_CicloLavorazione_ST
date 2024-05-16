@@ -97,7 +97,7 @@ ELSE
 	bQ5 := FALSE;
 	bErr := FALSE;
 	
-	IF (stStatus.stZ1.tStepTime > stParams.tWaiting AND E_Z2_Step.Ready) THEN
+	IF (stStatus.stZ1.tStepTime > stParams.tWaiting AND stStatus.stZ2.eStep=E_Z2_Step.Ready) THEN
 		eNewStep := E_Z1_Step.Loading;
 	ELSIF (bStopRequest) THEN
 		eNewStep := E_Z1_Step.Stop;
