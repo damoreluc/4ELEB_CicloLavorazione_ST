@@ -101,7 +101,7 @@ ELSE
 	
 	(* call Z1 state machine  *)
 	fbZ1Machine(
-		bEnable:= stCtrl.bEnable, 
+		bEnable:= NOT(stStatus.bFailure), 
 		bAck:= (stStatus.eStep = E_FSM_Step.Recovering), 
 		bStart:= (stStatus.eStep = E_FSM_Step.Running), 
 		bStop:= (stStatus.eStep = E_FSM_Step.Stopping), 
@@ -110,13 +110,10 @@ ELSE
 		stParams:= stZ1Params, 
 		stStatus:= stStatus, 
 		bQ5=> stOut.bQ5);
-
-	(* update global failure flag *)	
-	stStatus.bFailure := stStatus.bFailure OR fbZ1Machine.bErr;
 	
 	(* call Z2 state machine  *)
 	fbZ2Machine(
-		bEnable:= stCtrl.bEnable, 
+		bEnable:= NOT(stStatus.bFailure), 
 		bAck:= (stStatus.eStep = E_FSM_Step.Recovering), 
 		bStop:= (stStatus.eStep = E_FSM_Step.Stopping), 
 		bI1:= stIn.bI1, 
@@ -127,12 +124,9 @@ ELSE
 		bQ1=> stOut.bQ1, 
 		bQ2=> stOut.bQ2);
 	
-	(* update global failure flag *)	
-	stStatus.bFailure := stStatus.bFailure OR fbZ2Machine.bErr;
-	
 	(* call Z3 state machine  *)	
 	fbZ3Machine(
-		bEnable:= stCtrl.bEnable, 
+		bEnable:= NOT(stStatus.bFailure), 
 		bAck:= (stStatus.eStep = E_FSM_Step.Recovering), 
 		bStop:= (stStatus.eStep = E_FSM_Step.Stopping), 
 		bI6:= stIn.bI6, 
@@ -141,26 +135,20 @@ ELSE
 		bQ6=> stOut.bQ6, 
 		bQ7=> stOut.bQ7);
 	
-	(* update global failure flag *)		
-	stStatus.bFailure := stStatus.bFailure OR fbZ3Machine.bErr;	
-	
 	(* call Z4 state machine  *)	
 	fbZ4Machine(
-		bEnable:= stCtrl.bEnable, 
+		bEnable:= NOT(stStatus.bFailure), 
 		bAck:= (stStatus.eStep = E_FSM_Step.Recovering), 
 		bStop:= (stStatus.eStep = E_FSM_Step.Stopping), 
 		bI8:= stIn.bI8, 
 		stParams:= stZ4Params, 
 		stStatus:= stStatus, 
 		bQ8=> stOut.bQ8, 
-		bQ9=> stOut.bQ9);
-		
-	(* update global failure flag *)		
-	stStatus.bFailure := stStatus.bFailure OR fbZ4Machine.bErr;			
+		bQ9=> stOut.bQ9);	
 	
 	(* call Z5 state machine  *)
 	fbZ5Machine(
-		bEnable:= stCtrl.bEnable, 
+		bEnable:= NOT(stStatus.bFailure), 
 		bAck:= (stStatus.eStep = E_FSM_Step.Recovering), 
 		bStop:= (stStatus.eStep = E_FSM_Step.Stopping), 
 		bI3:= stIn.bI3, 
@@ -168,23 +156,17 @@ ELSE
 		stParams:= stZ5Params, 
 		stStatus:= stStatus, 
 		bQ3=> stOut.bQ3, 
-		bQ4=> stOut.bQ4);
-		
-	(* update global failure flag *)		
-	stStatus.bFailure := stStatus.bFailure OR fbZ5Machine.bErr;			
+		bQ4=> stOut.bQ4);		
 	
 	(* call Z6 state machine  *)
 	fbZ6Machine(
-		bEnable:= stCtrl.bEnable, 
+		bEnable:= NOT(stStatus.bFailure), 
 		bAck:= (stStatus.eStep = E_FSM_Step.Recovering), 
 		bStop:= (stStatus.eStep = E_FSM_Step.Stopping), 
 		bI9:= stIn.bI9, 
 		stParams:= stZ6Params, 
 		stStatus:= stStatus, 
-		bQ10=> stOut.bQ10);
-		
-	(* update global failure flag *)		
-	stStatus.bFailure := stStatus.bFailure OR fbZ6Machine.bErr;			
+		bQ10=> stOut.bQ10);	
 		
 	
 	// 05. write outputs and machine information
@@ -194,5 +176,15 @@ ELSE
 	// 06. end - other operations			 
 END_IF]]></ST>
     </Implementation>
+    <LineIds Name="FB_FSM_Main">
+      <LineId Id="3" Count="52" />
+      <LineId Id="59" Count="12" />
+      <LineId Id="75" Count="10" />
+      <LineId Id="89" Count="11" />
+      <LineId Id="104" Count="11" />
+      <LineId Id="119" Count="9" />
+      <LineId Id="132" Count="6" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
   </POU>
 </TcPlcObject>

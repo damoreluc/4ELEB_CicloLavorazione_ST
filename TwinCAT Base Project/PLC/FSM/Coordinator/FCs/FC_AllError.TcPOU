@@ -9,11 +9,11 @@ VAR
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[FC_AllError := (stStatus.stZ1.eStep = E_Z1_Step.NeOrError) AND
-                 (stStatus.stZ2.eStep = E_Z2_Step.NeOrError) AND
-                 (stStatus.stZ3.eStep = E_Z3_Step.NeOrError) AND	
-                 (stStatus.stZ4.eStep = E_Z4_Step.NeOrError) AND
-                 (stStatus.stZ5.eStep = E_Z5_Step.NeOrError) AND	
+      <ST><![CDATA[FC_AllError := (stStatus.stZ1.eStep = E_Z1_Step.NeOrError) OR
+                 (stStatus.stZ2.eStep = E_Z2_Step.NeOrError) OR
+                 (stStatus.stZ3.eStep = E_Z3_Step.NeOrError) OR	
+                 (stStatus.stZ4.eStep = E_Z4_Step.NeOrError) OR
+                 (stStatus.stZ5.eStep = E_Z5_Step.NeOrError) OR	
                  (stStatus.stZ6.eStep = E_Z6_Step.NeOrError);]]></ST>
     </Implementation>
     <LineIds Name="FC_AllError">

@@ -38,6 +38,7 @@ IF bAck THEN
 END_IF
 
 // update critical condition
+bCritical := FC_AllError(stStatus) OR NOT stCtrl.bEmergency;
 
 // update holding conditions
 bFailure := bCritical OR bError;
@@ -45,5 +46,11 @@ bFailure := bCritical OR bError;
 bBlinking := bFailure;
 bFixed := bWarning;]]></ST>
     </Implementation>
+    <LineIds Name="FB_FSM_Diagnostic">
+      <LineId Id="3" Count="11" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="15" Count="3" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
   </POU>
 </TcPlcObject>

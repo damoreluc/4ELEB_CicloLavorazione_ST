@@ -48,9 +48,10 @@ ELSE
 	
 	// update of the enabling conditions (bStop, alarms, etc.)
 	
+	
 	// 1. FSM Preamble ----------------------------------------------------
     // 1.a State machine disabled or failure
-	IF NOT stCtrl.bEnable OR NOT stCtrl.bEmergency OR stStatus.bFailure THEN
+	IF NOT stCtrl.bEnable OR stStatus.bFailure THEN
 		eNewStep := E_FSM_Step.NeOrError;
 	END_IF
 
@@ -64,7 +65,6 @@ ELSE
 	
 	// 1.c Do filters on signals	
 
-	
 	// Do requests, for example to stop the machine
 	IF stCmd.bStop THEN
 		bStopRequest := TRUE;
@@ -83,24 +83,128 @@ ELSE
 			stOut.bFixedGreen := TRUE;
 			stOut.bBlinkingGreen := FALSE;
 			stOut.bFixedRed := FALSE;
-			stOut.bBlinkingRed := FALSE;
+			stOut.bBlinkingRed := TRUE;
 			stOut.bFixedYellow := FALSE;
-			stOut.bBlinkingYellow := FALSE;
-					
+			stOut.bBlinkingYellow := FALSE;				
 			
 			// next state transition
 			IF stCtrl.bEnable THEN
 				IF stCmd.bAck THEN
-					eNewStep := E_Z3_Step.Recovering;
+					eNewStep := E_FSM_Step.Recovering;
 				END_IF
 			END_IF
 		
 			// on exit action
-			IF eNewStep <> E_Z3_Step.NoStep THEN
+			IF eNewStep <> E_FSM_Step.NoStep THEN
 				nErrId := 0;
-				eErrStep := E_Z3_Step.NoStep;
+				eErrStep := E_FSM_Step.NoStep;
 			END_IF
-						
+
+		// Recovering ---------------------------------			
+		E_FSM_Step.Recovering :
+			// on entry action
+			IF NOT bEntryact THEN
+				bEntryact := TRUE;
+			END_IF
+			
+			// body	
+			stOut.bFixedGreen := TRUE;
+			stOut.bBlinkingGreen := FALSE;
+			stOut.bFixedRed := FALSE;
+			stOut.bBlinkingRed := FALSE;
+			stOut.bFixedYellow := FALSE;
+			stOut.bBlinkingYellow := TRUE;
+			
+			// next state transition
+			IF stCtrl.bEnable THEN
+				IF FC_AllStopped(stStatus) THEN
+					eNewStep := E_FSM_Step.Stopping;
+				END_IF				
+			END_IF
+			
+			// on exit action
+			IF eNewStep <> E_Z3_Step.NoStep THEN
+				stStatus.bFailure := FALSE;
+			END_IF
+
+		// Stopping ---------------------------------			
+		E_FSM_Step.Stopping :
+			// on entry action
+			IF NOT bEntryact THEN
+				bEntryact := TRUE;
+			END_IF
+			
+			// body	
+			stOut.bFixedGreen := FALSE;
+			stOut.bBlinkingGreen := TRUE;
+			stOut.bFixedRed := FALSE;
+			stOut.bBlinkingRed := FALSE;
+			stOut.bFixedYellow := FALSE;
+			stOut.bBlinkingYellow := TRUE;
+			
+			// next state transition
+			IF stCtrl.bEnable THEN
+				IF stStatus.tStepTime > stParams.tStoppingDelay THEN
+					eNewStep := E_FSM_Step.Stop;
+				END_IF				
+			END_IF
+			
+			// on exit action
+			IF eNewStep <> E_Z3_Step.NoStep THEN
+			   ;
+			END_IF
+
+		// Stop ---------------------------------			
+		E_FSM_Step.Stop :
+			// on entry action
+			IF NOT bEntryact THEN
+				bEntryact := TRUE;
+			END_IF
+			
+			// body	
+			stOut.bFixedGreen := FALSE;
+			stOut.bBlinkingGreen := FALSE;
+			stOut.bFixedRed := TRUE;
+			stOut.bBlinkingRed := FALSE;
+			stOut.bFixedYellow := FALSE;
+			stOut.bBlinkingYellow := TRUE;
+			
+			// next state transition
+			IF stCtrl.bEnable AND stCmd.bStart AND NOT stCmd.bStop THEN
+				eNewStep := E_FSM_Step.Running;			
+			END_IF
+			
+			// on exit action
+			IF eNewStep <> E_Z3_Step.NoStep THEN
+			   ;
+			END_IF						
+
+		// Running ---------------------------------			
+		E_FSM_Step.Running :
+			// on entry action
+			IF NOT bEntryact THEN
+				bEntryact := TRUE;
+			END_IF
+			
+			// body	
+			stOut.bFixedGreen := TRUE;
+			stOut.bBlinkingGreen := FALSE;
+			stOut.bFixedRed := FALSE;
+			stOut.bBlinkingRed := FALSE;
+			stOut.bFixedYellow := FALSE;
+			stOut.bBlinkingYellow := FALSE;
+			
+			// next state transition
+			IF stCtrl.bEnable AND stCmd.bStart AND NOT stCmd.bStop THEN
+				eNewStep := E_FSM_Step.Running;			
+			END_IF
+			
+			// on exit action
+			IF eNewStep <> E_Z3_Step.NoStep THEN
+			   ;
+			END_IF	
+
+	
 	ELSE
 		// this happens also if we forget to code one step 
 		eNewstep := E_FSM_Step.NeOrError;
@@ -117,11 +221,30 @@ ELSE
 END_IF]]></ST>
     </Implementation>
     <LineIds Name="FB_FSM">
-      <LineId Id="3" Count="34" />
+      <LineId Id="3" Count="10" />
+      <LineId Id="200" Count="0" />
+      <LineId Id="14" Count="14" />
+      <LineId Id="30" Count="7" />
       <LineId Id="82" Count="9" />
       <LineId Id="106" Count="3" />
-      <LineId Id="93" Count="12" />
-      <LineId Id="38" Count="14" />
+      <LineId Id="94" Count="11" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="146" Count="8" />
+      <LineId Id="195" Count="4" />
+      <LineId Id="157" Count="4" />
+      <LineId Id="163" Count="0" />
+      <LineId Id="165" Count="5" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="202" Count="0" />
+      <LineId Id="204" Count="43" />
+      <LineId Id="249" Count="0" />
+      <LineId Id="251" Count="4" />
+      <LineId Id="201" Count="0" />
+      <LineId Id="256" Count="23" />
+      <LineId Id="145" Count="0" />
+      <LineId Id="281" Count="0" />
+      <LineId Id="280" Count="0" />
+      <LineId Id="40" Count="12" />
       <LineId Id="2" Count="0" />
     </LineIds>
   </POU>
