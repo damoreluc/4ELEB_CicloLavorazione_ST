@@ -5,6 +5,7 @@
 VAR_INPUT
 	bEnable		:	BOOL;
 	bAck		:	BOOL;
+	bStart      :   BOOL;
 //	bStart		:	BOOL;	//	Z1 è in Done
 	bStop		:	BOOL;
 	bI1			:	BOOL;
@@ -127,7 +128,7 @@ ELSE
 	bQ2 := FALSE;
 	bErr := FALSE;
 	//transition from Stop to Ready
-	IF (stStatus.tStepTime > stParams.tStopDelay) THEN
+	IF ((stStatus.tStepTime > stParams.tStopDelay) AND bStart) THEN
 		eNewStep := E_Z2_Step.Ready; 
 	END_IF;
 	// exit action
