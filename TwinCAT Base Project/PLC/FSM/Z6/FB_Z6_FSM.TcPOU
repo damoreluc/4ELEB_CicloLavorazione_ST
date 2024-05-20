@@ -60,10 +60,21 @@ ELSE
 		bEntryact := FALSE;
 	END_IF;	
 	
+	IF stStatus.bFailure THEN
+		eNewstep := E_Z6_Step.NeOrError;
+	END_IF
+	
 	(* switch - case della MSF *)
 	CASE stStatus.stZ6.eStep OF
 	// To be done...
+	//STOP
 	E_Z6_Step.Stop	:
+	
+	//entry act
+	IF NOT bEntryact THEN
+		bErr := TRUE;
+		bEntryact := TRUE;
+	END_IF
 	
 	bQ10	:=	FALSE;
 	bErr	:= 	FALSE;
@@ -71,7 +82,8 @@ ELSE
 	IF(stStatus.tStepTime > stParams.tStopDelay) THEN
 		eNewStep	:=	E_Z6_Step.Ready;
 	END_IF
-	
+		
+	//READY
 	E_Z6_Step.Ready	:
 	
 	bQ10	:=	FALSE;
@@ -83,6 +95,7 @@ ELSE
 		eNewStep := E_Z6_Step.Stop;
 	END_IF
 	
+	//LOADING
 	E_Z6_Step.Loading	:
 	
 	bQ10	:=	TRUE;
@@ -94,6 +107,7 @@ ELSE
 		eNewStep := E_Z6_Step.Stop;
 	END_IF
 	
+	//WAIT_UNLOADING
 	E_Z6_Step.WaitUnloading	:
 	
 	bQ10	:=	FALSE;
@@ -103,6 +117,7 @@ ELSE
 		eNewStep	:=	E_Z6_Step.Done;
 	END_IF
 	
+	
 	E_Z6_Step.Done	:
 	
 	bQ10	:=	FALSE;
@@ -110,7 +125,13 @@ ELSE
 	
 	eNewStep := E_Z6_Step.Ready;
 	
+	//NEORERROR
 	E_Z6_Step.NeOrError	:
+	
+	IF NOT bEntryact THEN
+		bErr := TRUE;
+		bEntryact := TRUE;
+	END_IF
 	
 	bQ10	:=	FALSE;
 	bErr	:= 	TRUE;
@@ -119,6 +140,10 @@ ELSE
 		eNewStep	:=	E_Z6_Step.Recovering;
 	END_IF
 	
+	//exit act
+
+	
+	//RECOVERING
 	E_Z6_Step.Recovering	:
 	
 	bQ10	:=	FALSE;
@@ -141,25 +166,48 @@ ELSE
 END_IF	]]></ST>
     </Implementation>
     <LineIds Name="FB_Z6_FSM">
-      <LineId Id="3" Count="33" />
-      <LineId Id="77" Count="8" />
+      <LineId Id="3" Count="28" />
+      <LineId Id="241" Count="3" />
+      <LineId Id="32" Count="3" />
+      <LineId Id="159" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="194" Count="0" />
+      <LineId Id="228" Count="0" />
+      <LineId Id="196" Count="2" />
+      <LineId Id="195" Count="0" />
+      <LineId Id="77" Count="6" />
+      <LineId Id="229" Count="0" />
+      <LineId Id="158" Count="0" />
+      <LineId Id="85" Count="0" />
       <LineId Id="94" Count="0" />
       <LineId Id="96" Count="1" />
       <LineId Id="95" Count="0" />
       <LineId Id="98" Count="4" />
       <LineId Id="105" Count="0" />
+      <LineId Id="157" Count="0" />
       <LineId Id="107" Count="8" />
       <LineId Id="106" Count="0" />
       <LineId Id="103" Count="0" />
+      <LineId Id="156" Count="0" />
       <LineId Id="117" Count="6" />
       <LineId Id="116" Count="0" />
       <LineId Id="104" Count="0" />
+      <LineId Id="155" Count="0" />
       <LineId Id="127" Count="4" />
       <LineId Id="126" Count="0" />
       <LineId Id="136" Count="0" />
-      <LineId Id="138" Count="6" />
+      <LineId Id="154" Count="0" />
+      <LineId Id="138" Count="0" />
+      <LineId Id="162" Count="0" />
+      <LineId Id="164" Count="2" />
+      <LineId Id="163" Count="0" />
+      <LineId Id="139" Count="5" />
       <LineId Id="137" Count="0" />
+      <LineId Id="235" Count="0" />
+      <LineId Id="237" Count="0" />
+      <LineId Id="236" Count="0" />
       <LineId Id="37" Count="0" />
+      <LineId Id="161" Count="0" />
       <LineId Id="147" Count="5" />
       <LineId Id="146" Count="0" />
       <LineId Id="38" Count="11" />
