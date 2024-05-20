@@ -75,7 +75,7 @@ ELSE
 	E_Z3_Step.NeOrError :
 			// on entry action
 			IF NOT bEntryact THEN
-				stStatus.bFailure := TRUE;
+				bErr := TRUE;
 				bEntryact := TRUE;
 			END_IF
 			
