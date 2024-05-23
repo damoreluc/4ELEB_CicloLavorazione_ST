@@ -35,7 +35,7 @@ END_VAR
     <Implementation>
       <ST><![CDATA[IF NOT bInitialized THEN
 	eNewstep :=  E_Z4_Step.NoStep;
-	stStatus.stZ4.eStep :=  E_Z4_Step.Stop;
+	stStatus.stZ4.eStep :=  E_Z4_Step.NeOrError;
 	bEntryact := FALSE;
 	bInitialized := TRUE;	
 	bErr := FALSE;
@@ -61,12 +61,7 @@ ELSE
 		stStatus.stZ4.eStep := eNewstep;
 		eNewstep :=  E_Z4_Step.NoStep;
 		bEntryact := FALSE;
-	END_IF;
-
-	(* transizioni di stato *)
-	IF ST_Z4_Status.tStepTime>ST_Z4_Params.tStopDelay THEN
-         ST_Z4_Status.eStep := E_Z4_Step.Ready;
-END_IF	
+	END_IF
 	
 	(* Guasto e Rispristino *)
 	IF stStatus.bFailure THEN
@@ -79,7 +74,7 @@ END_IF
 	E_Z4_Step.NeOrError :
 			// on entry action
 			IF NOT bEntryact THEN
-				stStatus.bFailure := TRUE;
+				bErr := TRUE;
 				bEntryact := TRUE;
 			END_IF
 			
@@ -98,8 +93,8 @@ END_IF
 		
 			// on exit action
 			IF eNewStep <> E_Z4_Step.NoStep THEN
-				ST_Z4_Status.nErrorId := 4;
-				ST_Z4_Status.eErrorStep := E_Z4_Step.NoStep;
+				stStatus.nErrorId := 4;
+				stStatus.eErrorStep := E_Z4_Step.NoStep;
 			END_IF
 	
 			// Recovering ---------------------------------			
@@ -117,7 +112,7 @@ END_IF
 			// next state transition
 			IF bEnable THEN
 				IF NOT(stStatus.bFailure) THEN
-					IF (ST_Z4_status.tStepTime > stParams.tRecovering) THEN
+					IF (stStatus.stZ4.tStepTime > stParams.tRecovering) THEN
 						eNewStep := E_Z4_Step.Stop;
 					END_IF
 				END_IF				
@@ -170,7 +165,7 @@ END_IF
 			
 			// next state transition
 			IF bStopRequest THEN 
-				eNewStep := E_Z4_Step.Recovering;
+				eNewStep := E_Z4_Step.Stop;
 			ELSIF stStatus.stZ3.eStep=E_Z3_Step.WaitZ4Ready THEN
 				eNewStep := E_Z4_Step.MoveToDrill;
 			END_IF
@@ -309,8 +304,6 @@ END_IF
 			eNewstep :=  E_Z4_Step.NeOrError;
 			stStatus.stZ4.eErrorStep :=  E_Z4_Step.Unknown;			
 			stStatus.stZ4.nErrorId := 16#0004_9999;	
-	
-	
 	END_CASE
 	
 	(* call FBs *)
@@ -319,25 +312,17 @@ END_IF
 	fbTonStep(IN := (eNewstep =  E_Z4_Step.NoStep), PT := T#500H);
 	stStatus.stZ4.tStepTime := fbTonStep.ET;	
 	
-END_IF	]]></ST>
+END_IF]]></ST>
     </Implementation>
     <LineIds Name="FB_Z4_FSM">
-      <LineId Id="3" Count="28" />
-      <LineId Id="108" Count="0" />
-      <LineId Id="107" Count="0" />
-      <LineId Id="117" Count="1" />
-      <LineId Id="113" Count="0" />
-      <LineId Id="32" Count="0" />
+      <LineId Id="3" Count="29" />
       <LineId Id="435" Count="3" />
       <LineId Id="433" Count="0" />
       <LineId Id="33" Count="1" />
       <LineId Id="173" Count="227" />
       <LineId Id="35" Count="0" />
       <LineId Id="131" Count="0" />
-      <LineId Id="38" Count="3" />
-      <LineId Id="142" Count="0" />
-      <LineId Id="137" Count="0" />
-      <LineId Id="42" Count="7" />
+      <LineId Id="38" Count="11" />
       <LineId Id="2" Count="0" />
     </LineIds>
   </POU>

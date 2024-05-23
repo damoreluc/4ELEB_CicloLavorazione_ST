@@ -194,7 +194,7 @@ ELSE
 			IF bStopRequest THEN 
 				eNewStep := E_Z3_Step.Recovering;
 			ELSIF bI6 THEN
-				eNewStep := E_Z3_Step.MoveToMill;
+				eNewStep := E_Z3_Step.Milling;
 			END_IF
 			
 			// on exit action
