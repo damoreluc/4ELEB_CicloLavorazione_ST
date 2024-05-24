@@ -45,7 +45,7 @@ END_VAR
     <Implementation>
       <ST><![CDATA[IF NOT bInitialized THEN
 	eNewstep :=  E_Z1_Step.NoStep;
-	stStatus.stZ1.eStep :=  E_Z1_Step.Stop;
+	stStatus.stZ1.eStep :=  E_Z1_Step.NeOrError;
 	bEntryact := FALSE;
 	bInitialized := TRUE;	
 	bErr := FALSE;
@@ -188,46 +188,5 @@ ELSE
 	
 END_IF	]]></ST>
     </Implementation>
-    <LineIds Name="FB_Z1_FSM">
-      <LineId Id="3" Count="33" />
-      <LineId Id="229" Count="24" />
-      <LineId Id="38" Count="0" />
-      <LineId Id="84" Count="0" />
-      <LineId Id="116" Count="1" />
-      <LineId Id="83" Count="0" />
-      <LineId Id="118" Count="0" />
-      <LineId Id="122" Count="0" />
-      <LineId Id="121" Count="0" />
-      <LineId Id="39" Count="0" />
-      <LineId Id="123" Count="0" />
-      <LineId Id="126" Count="1" />
-      <LineId Id="124" Count="0" />
-      <LineId Id="128" Count="0" />
-      <LineId Id="130" Count="0" />
-      <LineId Id="154" Count="1" />
-      <LineId Id="131" Count="0" />
-      <LineId Id="129" Count="0" />
-      <LineId Id="132" Count="4" />
-      <LineId Id="138" Count="0" />
-      <LineId Id="156" Count="1" />
-      <LineId Id="139" Count="4" />
-      <LineId Id="145" Count="2" />
-      <LineId Id="149" Count="0" />
-      <LineId Id="151" Count="2" />
-      <LineId Id="150" Count="0" />
-      <LineId Id="144" Count="0" />
-      <LineId Id="159" Count="5" />
-      <LineId Id="158" Count="0" />
-      <LineId Id="165" Count="3" />
-      <LineId Id="170" Count="4" />
-      <LineId Id="178" Count="6" />
-      <LineId Id="169" Count="0" />
-      <LineId Id="185" Count="0" />
-      <LineId Id="187" Count="1" />
-      <LineId Id="190" Count="2" />
-      <LineId Id="186" Count="0" />
-      <LineId Id="40" Count="11" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
   </POU>
 </TcPlcObject>

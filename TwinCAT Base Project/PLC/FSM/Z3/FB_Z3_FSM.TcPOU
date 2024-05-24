@@ -5,7 +5,6 @@
 VAR_INPUT
 	bEnable		:	BOOL;
 	bAck		:	BOOL;
-	bStart		:	BOOL;
 	bStop		:	BOOL;
 	bI6			:	BOOL;
 	stParams	:	ST_Z3_Params;	
@@ -14,15 +13,12 @@ VAR_IN_OUT
 	stStatus	:	ST_FSM_Status;
 END_VAR
 VAR_OUTPUT
-	eStep		:	E_Z3_Step;
-	tStepTime	:	TIME;
-	eErrStep	:	E_Z3_Step;
-	nErrId		:	DINT;
 	// Digital Outputs
 	bQ6			:	BOOL;
 	bQ7			:	BOOL;	
 	bErr		:	BOOL;
 END_VAR
+
 VAR
 	// FSM internal variables
 	bInitialized	:	BOOL;
@@ -94,8 +90,8 @@ ELSE
 		
 			// on exit action
 			IF eNewStep <> E_Z3_Step.NoStep THEN
-				nErrId := 0;
-				eErrStep := E_Z3_Step.NoStep;
+				stStatus.stZ3.nErrorId := 0;
+				stStatus.stZ3.eErrorStep := E_Z3_Step.NoStep;
 			END_IF
 	
 			// Recovering ---------------------------------			
@@ -113,7 +109,7 @@ ELSE
 			// next state transition
 			IF bEnable THEN
 				IF NOT(stStatus.bFailure) THEN
-					IF (tStepTime > stParams.tRecovering) THEN
+					IF (stStatus.stZ3.tStepTime > stParams.tRecovering) THEN
 						eNewStep := E_Z3_Step.Stop;
 					END_IF
 				END_IF				
@@ -139,8 +135,8 @@ ELSE
 			bErr:= FALSE;
 			
 			// next state transition
-			IF NOT bStop AND bStart THEN
-				IF (tStepTime > stParams.tStopDelay) THEN
+			IF bEnable THEN
+				IF (stStatus.stZ3.tStepTime > stParams.tStopDelay) THEN
 					eNewStep := E_Z3_Step.Ready;
 				END_IF
 			END_IF
@@ -218,7 +214,7 @@ ELSE
 			bErr:= FALSE;
 			
 			// next state transition
-			IF tStepTime > stParams.tMilling THEN 
+			IF stStatus.stZ3.tStepTime > stParams.tMilling THEN 
 				eNewStep := E_Z3_Step.WaitZ4Ready;
 			END_IF
 			
@@ -266,7 +262,7 @@ ELSE
 			bErr:= FALSE;
 			
 			// next state transition
-			IF tStepTime > stParams.tDelayToZ4 THEN 
+			IF stStatus.stZ3.tStepTime > stParams.tDelayToZ4 THEN 
 				eNewStep := E_Z3_Step.Done;
 			END_IF
 			
@@ -313,51 +309,5 @@ ELSE
 	
 END_IF	]]></ST>
     </Implementation>
-    <LineIds Name="FB_Z3_FSM">
-      <LineId Id="3" Count="32" />
-      <LineId Id="79" Count="7" />
-      <LineId Id="93" Count="15" />
-      <LineId Id="78" Count="0" />
-      <LineId Id="36" Count="0" />
-      <LineId Id="121" Count="7" />
-      <LineId Id="135" Count="2" />
-      <LineId Id="139" Count="13" />
-      <LineId Id="183" Count="10" />
-      <LineId Id="260" Count="1" />
-      <LineId Id="204" Count="5" />
-      <LineId Id="212" Count="5" />
-      <LineId Id="120" Count="0" />
-      <LineId Id="262" Count="0" />
-      <LineId Id="264" Count="15" />
-      <LineId Id="289" Count="0" />
-      <LineId Id="291" Count="0" />
-      <LineId Id="293" Count="0" />
-      <LineId Id="283" Count="4" />
-      <LineId Id="263" Count="0" />
-      <LineId Id="294" Count="0" />
-      <LineId Id="296" Count="23" />
-      <LineId Id="295" Count="0" />
-      <LineId Id="321" Count="0" />
-      <LineId Id="346" Count="0" />
-      <LineId Id="345" Count="0" />
-      <LineId Id="322" Count="15" />
-      <LineId Id="340" Count="4" />
-      <LineId Id="320" Count="0" />
-      <LineId Id="347" Count="0" />
-      <LineId Id="349" Count="16" />
-      <LineId Id="368" Count="4" />
-      <LineId Id="348" Count="0" />
-      <LineId Id="37" Count="0" />
-      <LineId Id="374" Count="21" />
-      <LineId Id="373" Count="0" />
-      <LineId Id="396" Count="0" />
-      <LineId Id="399" Count="14" />
-      <LineId Id="415" Count="0" />
-      <LineId Id="421" Count="0" />
-      <LineId Id="416" Count="4" />
-      <LineId Id="397" Count="1" />
-      <LineId Id="38" Count="11" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
   </POU>
 </TcPlcObject>
