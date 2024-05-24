@@ -27,19 +27,17 @@ VAR
 	fbRtStop		:	R_TRIG;
 	fbRtI9			:	R_TRIG;
 	bStopRequest	:	BOOL;	
-	nErrId: INT;
-	eErrStep: E_Z6_STEP;
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[IF NOT bInitialized THEN
 	eNewstep :=  E_Z6_Step.NoStep;
-	stStatus.stZ1.eStep :=  E_Z1_Step.Stop;
+	stStatus.stZ6.eStep :=  E_Z6_Step.NeOrError;
 	bEntryact := FALSE;
 	bInitialized := TRUE;	
 	bErr := FALSE;
-	stStatus.stZ1.eErrorStep :=  E_Z1_Step.NoStep;	
-	stStatus.stZ1.nErrorId := 0;	
+	stStatus.stZ6.eErrorStep :=  E_Z6_Step.NoStep;	
+	stStatus.stZ6.nErrorId := 0;	
 ELSE
 	(* fronti *)
 	fbRtStop(CLK:= bStop);	
@@ -68,93 +66,164 @@ ELSE
 	
 	(* switch - case della MSF *)
 	CASE stStatus.stZ6.eStep OF
-	// To be done...
-	//STOP
+
+	// STOP ------------------------------------------
 	E_Z6_Step.Stop	:
-	
-	//entry act
-	IF NOT bEntryact THEN
-		bErr := TRUE;
-		bEntryact := TRUE;
-	END_IF
-	
-	bQ10	:=	FALSE;
-	bErr	:= 	FALSE;
-	
-	IF(stStatus.tStepTime > stParams.tStopDelay) THEN
-		eNewStep	:=	E_Z6_Step.Ready;
-	END_IF
+		//entry act
+		IF NOT bEntryact THEN
+			bErr := FALSE;
+			bEntryact := TRUE;
+		END_IF
 		
-	//READY
-	E_Z6_Step.Ready	:
+		// Body
+		bQ10 := FALSE;
+		
+		// transition from Stop to Ready
+		IF(stStatus.stZ6.tStepTime > stParams.tStopDelay) THEN
+			eNewStep := E_Z6_Step.Ready;
+		END_IF
 	
-	bQ10	:=	FALSE;
-	bErr	:= 	FALSE;
+		// exit action
+		IF eNewStep <> E_Z6_Step.NoStep THEN
+			;
+		END_IF		
+		
+	// READY ------------------------------------------
+	E_Z6_Step.Ready:
+		//entry act
+		IF NOT bEntryact THEN
+			bErr := FALSE;
+			bEntryact := TRUE;
+		END_IF
+		
+		// Body		
+		bQ10 := FALSE;
+		
+		// transition from Ready to Loading / Stop
+		IF bStopRequest THEN
+			eNewStep := E_Z6_Step.Stop;
+		ELSE
+			IF (stStatus.stZ5.eStep = E_Z5_Step.WaitZ6Ready) THEN
+				eNewStep := E_Z6_Step.Loading;
+			END_IF
+		END_IF		
 	
-	IF (NOT(bStopRequest) AND stStatus.stZ5.eStep = E_Z5_Step.WaitZ6Ready) THEN
-		eNewStep	:=	E_Z6_Step.Loading;
-	ELSIF bStopRequest THEN
-		eNewStep := E_Z6_Step.Stop;
-	END_IF
+		// exit action
+		IF eNewStep <> E_Z6_Step.NoStep THEN
+			;
+		END_IF	
 	
-	//LOADING
-	E_Z6_Step.Loading	:
+	// LOADING ------------------------------------------
+	E_Z6_Step.Loading:
+		//entry act
+		IF NOT bEntryact THEN
+			bErr := FALSE;
+			bEntryact := TRUE;
+		END_IF
+		
+		// Body	
+		bQ10 := TRUE;
+		
+		// transition from Loading to Stop / WaitUnloading
+		IF bStopRequest THEN
+			eNewStep := E_Z6_Step.Stop;
+		ELSE
+			IF fbrtI9.Q THEN
+				eNewStep := E_Z6_Step.WaitUnloading;
+			END_IF
+		END_IF
 	
-	bQ10	:=	TRUE;
-	bErr	:= 	FALSE;
+		// exit action
+		IF eNewStep <> E_Z6_Step.NoStep THEN
+			;
+		END_IF	
 	
-	IF (NOT(bStopRequest) AND fbrtI9.Q) THEN
-		eNewStep	:=	E_Z6_Step.WaitUnloading;
-	ELSIF bStopRequest THEN
-		eNewStep := E_Z6_Step.Stop;
-	END_IF
-	
-	//WAIT_UNLOADING
+	// WAIT_UNLOADING ------------------------------------------
 	E_Z6_Step.WaitUnloading	:
+		//entry act
+		IF NOT bEntryact THEN
+			bErr := FALSE;
+			bEntryact := TRUE;
+		END_IF
+		
+		// Body		
+		bQ10	:=	FALSE;
+
+		// transition from WaitUnloading to Done	
+		IF NOT(bI9) THEN
+			eNewStep := E_Z6_Step.Done;
+		END_IF
 	
-	bQ10	:=	FALSE;
-	bErr	:= 	FALSE;
+		// exit action
+		IF eNewStep <> E_Z6_Step.NoStep THEN
+			;
+		END_IF	
 	
-	IF (NOT(fbrtI9.Q)) THEN
-		eNewStep	:=	E_Z6_Step.Done;
-	END_IF
-	
-	
+	// DONE	
 	E_Z6_Step.Done	:
+		//entry act
+		IF NOT bEntryact THEN
+			bErr := FALSE;
+			bEntryact := TRUE;
+		END_IF
+		
+		// Body		
+		bQ10 := FALSE;
+
+		// transition from Done to Ready	
+		eNewStep := E_Z6_Step.Ready;
 	
-	bQ10	:=	FALSE;
-	bErr	:= 	FALSE;
+		// exit action
+		IF eNewStep <> E_Z6_Step.NoStep THEN
+			;
+		END_IF	
 	
-	eNewStep := E_Z6_Step.Ready;
+	// NEORERROR ------------------------------------------
+	E_Z6_Step.NeOrError:
+		//entry act	
+		IF NOT bEntryact THEN
+			bErr := TRUE;
+			bEntryact := TRUE;
+		END_IF
+		
+		// Body		
+		bQ10	:=	FALSE;
+
+		// transition from NeOrError to Recovering	
+		IF bEnable THEN
+			IF bAck THEN
+				eNewStep	:=	E_Z6_Step.Recovering;
+			END_IF
+		END_IF
 	
-	//NEORERROR
-	E_Z6_Step.NeOrError	:
+		//exit act
+		IF eNewStep <> E_Z6_Step.NoStep THEN
+			stStatus.stZ6.nErrorId := 0;
+			stStatus.stZ6.eErrorStep := E_Z6_Step.NoStep;
+		END_IF	
 	
-	IF NOT bEntryact THEN
-		bErr := TRUE;
-		bEntryact := TRUE;
-	END_IF
+	// RECOVERING ------------------------------------------
+	E_Z6_Step.Recovering:
+		//entry act	
+		IF NOT bEntryact THEN
+			bErr := FALSE;
+			bEntryact := TRUE;
+		END_IF
+		
+		// Body	
+		bQ10	:=	FALSE;
+
+		// transition from Recovering to Stop	
+		IF bEnable THEN
+			IF NOT(stStatus.bFailure) THEN
+				eNewStep := E_Z6_Step.Stop;
+			END_IF				
+		END_IF
 	
-	bQ10	:=	FALSE;
-	bErr	:= 	TRUE;
-	
-	IF (bAck) THEN
-		eNewStep	:=	E_Z6_Step.Recovering;
-	END_IF
-	
-	//exit act
-	IF eNewStep <> E_Z1_Step.NoStep THEN
-			nErrId := 0;
-			eErrStep := E_Z6_Step.NoStep;
-	END_IF	
-	
-	//RECOVERING
-	E_Z6_Step.Recovering	:
-	
-	bQ10	:=	FALSE;
-	bErr	:= 	FALSE;
-	
-	eNewStep	:=	E_Z6_Step.Stop;
+		// exit action
+		IF eNewStep <> E_Z6_Step.NoStep THEN
+			;
+		END_IF
 	
 	ELSE
 			eNewstep :=  E_Z6_Step.NeOrError;
@@ -170,54 +239,5 @@ ELSE
 	
 END_IF	]]></ST>
     </Implementation>
-    <LineIds Name="FB_Z6_FSM">
-      <LineId Id="3" Count="28" />
-      <LineId Id="241" Count="3" />
-      <LineId Id="32" Count="3" />
-      <LineId Id="159" Count="0" />
-      <LineId Id="36" Count="0" />
-      <LineId Id="194" Count="0" />
-      <LineId Id="228" Count="0" />
-      <LineId Id="196" Count="2" />
-      <LineId Id="195" Count="0" />
-      <LineId Id="77" Count="6" />
-      <LineId Id="229" Count="0" />
-      <LineId Id="158" Count="0" />
-      <LineId Id="85" Count="0" />
-      <LineId Id="94" Count="0" />
-      <LineId Id="96" Count="1" />
-      <LineId Id="95" Count="0" />
-      <LineId Id="98" Count="4" />
-      <LineId Id="105" Count="0" />
-      <LineId Id="157" Count="0" />
-      <LineId Id="107" Count="8" />
-      <LineId Id="106" Count="0" />
-      <LineId Id="103" Count="0" />
-      <LineId Id="156" Count="0" />
-      <LineId Id="117" Count="6" />
-      <LineId Id="116" Count="0" />
-      <LineId Id="104" Count="0" />
-      <LineId Id="155" Count="0" />
-      <LineId Id="127" Count="4" />
-      <LineId Id="126" Count="0" />
-      <LineId Id="136" Count="0" />
-      <LineId Id="154" Count="0" />
-      <LineId Id="138" Count="0" />
-      <LineId Id="162" Count="0" />
-      <LineId Id="164" Count="2" />
-      <LineId Id="163" Count="0" />
-      <LineId Id="139" Count="5" />
-      <LineId Id="137" Count="0" />
-      <LineId Id="235" Count="0" />
-      <LineId Id="237" Count="0" />
-      <LineId Id="272" Count="2" />
-      <LineId Id="236" Count="0" />
-      <LineId Id="37" Count="0" />
-      <LineId Id="161" Count="0" />
-      <LineId Id="147" Count="5" />
-      <LineId Id="146" Count="0" />
-      <LineId Id="38" Count="11" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
   </POU>
 </TcPlcObject>

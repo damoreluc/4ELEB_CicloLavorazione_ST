@@ -67,8 +67,9 @@ ELSE
 	
 	(* switch - case della MSF *)
 	CASE stStatus.stZ3.eStep OF
-	// To be done...
-	E_Z3_Step.NeOrError :
+		
+		// NeOrError ---------------------------------
+		E_Z3_Step.NeOrError :
 			// on entry action
 			IF NOT bEntryact THEN
 				bErr := TRUE;
@@ -77,9 +78,7 @@ ELSE
 			
 			// body
 			bQ6 := FALSE;
-			bQ7 := FALSE;
-			bErr := TRUE;
-					
+			bQ7 := FALSE;					
 			
 			// next state transition
 			IF bEnable THEN
@@ -94,36 +93,35 @@ ELSE
 				stStatus.stZ3.eErrorStep := E_Z3_Step.NoStep;
 			END_IF
 	
-			// Recovering ---------------------------------			
+		// Recovering ---------------------------------			
 		E_Z3_Step.Recovering :
 			// on entry action
 			IF NOT bEntryact THEN
+				bErr := FALSE;				
 				bEntryact := TRUE;
 			END_IF
 			
 			// body	
 			bQ6 := FALSE;
 			bQ7 := FALSE;
-			bErr := FALSE;
-			
+
 			// next state transition
 			IF bEnable THEN
-				IF NOT(stStatus.bFailure) THEN
-					IF (stStatus.stZ3.tStepTime > stParams.tRecovering) THEN
-						eNewStep := E_Z3_Step.Stop;
-					END_IF
+				IF (stStatus.stZ3.tStepTime > stParams.tRecovering) THEN
+					eNewStep := E_Z3_Step.Stop;
 				END_IF				
 			END_IF
 			
 			// on exit action
 			IF eNewStep <> E_Z3_Step.NoStep THEN
-				stStatus.bFailure := FALSE;
+				;
 			END_IF			
 			
 		// Stop ---------------------------------------
 		E_Z3_Step.Stop :
 			// on entry action
 			IF NOT bEntryact THEN
+				bErr:= FALSE;				
 				bStopRequest := FALSE;
 				bConveyorLoaded := FALSE;
 				bEntryact := TRUE;
@@ -132,7 +130,6 @@ ELSE
 			// body	
 			bQ6 := FALSE;
 			bQ7 := FALSE;
-			bErr:= FALSE;
 			
 			// next state transition
 			IF bEnable THEN
@@ -150,7 +147,7 @@ ELSE
 		E_Z3_Step.Ready :
 			// on entry action
 			IF NOT bEntryact THEN
-				bStopRequest := FALSE;
+				bErr:= FALSE;				
 				bConveyorLoaded := FALSE;
 				bEntryact := TRUE;
 			END_IF
@@ -158,8 +155,7 @@ ELSE
 			// body	
 			bQ6 := FALSE;
 			bQ7 := FALSE;
-			bErr:= FALSE;
-			
+
 			// next state transition
 			IF bStopRequest THEN 
 				eNewStep := E_Z3_Step.Stop;
@@ -176,16 +172,15 @@ ELSE
 		E_Z3_Step.MoveToMill :
 			// on entry action
 			IF NOT bEntryact THEN
-				bStopRequest := FALSE;
-				bConveyorLoaded := FALSE;
+				bErr:= FALSE;				
+				bConveyorLoaded := TRUE;
 				bEntryact := TRUE;
 			END_IF
 			
 			// body	
 			bQ6 := NOT(bI6);
 			bQ7 := FALSE;
-			bErr:= FALSE;
-			
+	
 			// next state transition
 			IF bStopRequest THEN 
 				eNewStep := E_Z3_Step.Recovering;
@@ -203,15 +198,14 @@ ELSE
 		E_Z3_Step.Milling :
 			// on entry action
 			IF NOT bEntryact THEN
-				bStopRequest := FALSE;
-				bConveyorLoaded := FALSE;
+				bErr:= FALSE;
+				bConveyorLoaded := TRUE;
 				bEntryact := TRUE;
 			END_IF
 			
 			// body	
 			bQ6 := FALSE;
 			bQ7 := TRUE;
-			bErr:= FALSE;
 			
 			// next state transition
 			IF stStatus.stZ3.tStepTime > stParams.tMilling THEN 
@@ -227,15 +221,14 @@ ELSE
 		E_Z3_Step.WaitZ4Ready :
 			// on entry action
 			IF NOT bEntryact THEN
-				bStopRequest := FALSE;
-				bConveyorLoaded := FALSE;
+				bErr:= FALSE;
+				bConveyorLoaded := TRUE;
 				bEntryact := TRUE;
 			END_IF
 			
 			// body	
 			bQ6 := FALSE;
 			bQ7 := FALSE;
-			bErr:= FALSE;
 			
 			// next state transition
 			IF stStatus.stZ4.eStep=E_Z4_Step.Ready THEN 
@@ -251,15 +244,14 @@ ELSE
 		E_Z3_Step.MoveToZ4 :
 			// on entry action
 			IF NOT bEntryact THEN
-				bStopRequest := FALSE;
-				bConveyorLoaded := FALSE;
+				bErr:= FALSE;
+				bConveyorLoaded := TRUE;
 				bEntryact := TRUE;
 			END_IF
 			
 			// body	
 			bQ6 := FALSE;
 			bQ7 := TRUE;
-			bErr:= FALSE;
 			
 			// next state transition
 			IF stStatus.stZ3.tStepTime > stParams.tDelayToZ4 THEN 
@@ -275,7 +267,7 @@ ELSE
 		E_Z3_Step.Done :
 			// on entry action
 			IF NOT bEntryact THEN
-				bStopRequest := FALSE;
+				bErr:= FALSE;
 				bConveyorLoaded := FALSE;
 				bEntryact := TRUE;
 			END_IF
@@ -283,10 +275,8 @@ ELSE
 			// body	
 			bQ6 := FALSE;
 			bQ7 := FALSE;
-			bErr:= FALSE;
 			
 			// next state transition
-				
 			eNewStep := E_Z3_Step.Ready;
 			
 			

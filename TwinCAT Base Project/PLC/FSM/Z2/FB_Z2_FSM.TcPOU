@@ -32,8 +32,6 @@ VAR
 	fbRtI2			:	R_TRIG;
 	fbRtI5			:	R_TRIG;
 	bStopRequest	:	BOOL;	
-	tStepTime		:   ST_Z2_Status;
-	tStopDelay		:   ST_Z2_Params;
 	bConveyorLoaded :   BOOL;
 END_VAR
 ]]></Declaration>
@@ -58,7 +56,6 @@ ELSE
 	END_IF; 
 
 	(* disabilitata o avaria *)
-	
 	IF NOT bEnable THEN
 		eNewstep := E_Z2_Step.NeOrError;
 	END_IF;
@@ -72,171 +69,185 @@ ELSE
 	
 	(* switch - case della MSF *)
 	CASE stStatus.stZ2.eStep OF
-	//Ne0rError	
-	E_Z1_Step.NeOrError :
-	// entry action
-	IF NOT bEntryact THEN
-	bErr := TRUE;
-	bEntryact := TRUE;
-	END_IF
-	// body
-	bQ1 := FALSE;
-	bQ2 := FALSE;
-	bErr := TRUE;
-	// transition from Ne0rError to Recovering
-	IF (bEnable AND bAck) THEN
-		eNewStep := E_Z2_Step.Recovering;
-	END_IF
-	// exit action
-	IF eNewStep <> E_Z2_Step.NoStep THEN
-	stStatus.nErrorID := 2;
-	stStatus.eErrorStep := E_Z2_Step.NoStep;
-	END_IF	
+		
+	// NeOrError -----------------------------------------
+	E_Z2_Step.NeOrError :
+		// entry action
+		IF NOT bEntryact THEN
+			bErr := TRUE;
+			bEntryact := TRUE;
+		END_IF
+		
+		// body
+		bQ1 := FALSE;
+		bQ2 := FALSE;
+		
+		// transition from Ne0rError to Recovering
+		IF (bEnable AND bAck) THEN
+			eNewStep := E_Z2_Step.Recovering;
+		END_IF
+		
+		// exit action
+		IF eNewStep <> E_Z2_Step.NoStep THEN
+			stStatus.stZ2.nErrorID := 2;
+			stStatus.stZ2.eErrorStep := E_Z2_Step.NoStep;
+		END_IF	
 	
     // Recovering		
     E_Z2_Step.Recovering :
-	// entry action
-	IF NOT bEntryact THEN
-	bEntryact := TRUE;
-	END_IF
-	// body	
-	bQ1 := NOT(bI2);
-	bQ2 := FALSE;
-	bErr := FALSE;
-	// transition from Recovering to Stop
-	IF (fbRtI2.Q) THEN
-	eNewStep := E_Z2_Step.Stop;
-	END_IF
-	// on exit action
-	IF eNewStep <> E_Z2_Step.NoStep THEN
-	stStatus.bFailure := FALSE;
-	END_IF				
+		// entry action
+		IF NOT bEntryact THEN
+			bErr := FALSE;
+			bEntryact := TRUE;
+		END_IF
+		
+		// body	
+		bQ1 := NOT(bI2);
+		bQ2 := FALSE;
+		
+		// transition from Recovering to Stop
+		IF (fbRtI2.Q) THEN
+			eNewStep := E_Z2_Step.Stop;
+		END_IF
+		
+		// on exit action
+		IF eNewStep <> E_Z2_Step.NoStep THEN
+			;
+		END_IF				
 	
     //Stop
     E_Z2_Step.Stop :
-	// entry action
-	 IF NOT bEntryact THEN
-		stStatus.bFailure := TRUE;
-	    bEntryact := TRUE;
-	 END_IF;
-	//body
-    bQ1 :=  FALSE;
-	bQ2 := FALSE;
-	bErr := FALSE;
-	//transition from Stop to Ready
-	IF ((stStatus.tStepTime > stParams.tStopDelay) AND bStart) THEN
-		eNewStep := E_Z2_Step.Ready; 
-	END_IF;
-	// exit action
-	IF eNewStep <> E_Z2_Step.NoStep THEN
-	stStatus.nErrorID := 0;
-	stStatus.eErrorStep := E_Z2_Step.NoStep;
-	END_IF;
+		// entry action
+		IF NOT bEntryact THEN
+			bErr := FALSE;
+			bEntryact := TRUE;
+		END_IF;
+		
+		//body
+		bQ1 := FALSE;
+		bQ2 := FALSE;
+		
+		//transition from Stop to Ready
+		IF (stStatus.tStepTime > stParams.tStopDelay) THEN
+			eNewStep := E_Z2_Step.Ready; 
+		END_IF;
+		
+		// exit action
+		IF eNewStep <> E_Z2_Step.NoStep THEN
+			;
+		END_IF;
 			
 	//Ready
 	E_Z2_Step.Ready :
-	// entry action
+		// entry action
 		IF NOT bEntryact THEN
-		bEntryact := TRUE;
+			bErr := FALSE;
+			bEntryact := TRUE;
 		END_IF;	
-	// body
-	bQ1 :=  FALSE;
-	bQ2 := FALSE;
-	bErr := FALSE;
-	//transition from Ready to Recovering 
-	IF (bStopRequest) THEN 
-		eNewStep := E_Z2_Step.Recovering;
-	END_IF; 	
-	//transition from Ready to WaitZ3Ready 
-	IF (NOT(bStopRequest) AND stStatus.stZ1.eStep = E_Z1_Step.DelayToZ2) THEN
-		eNewStep := E_Z2_Step.WaitZ3Ready;		
-	END_IF;
-	// exit action 
-	IF eNewStep <> E_Z2_Step.NoStep THEN
-	stStatus.bFailure := FALSE;
-	END_IF;	
+		
+		// body
+		bQ1 :=  FALSE;
+		bQ2 := FALSE;
+		
+		//transition from Ready to Recovering / WaitZ3Ready
+		IF (bStopRequest) THEN 
+			eNewStep := E_Z2_Step.Recovering;
+		ELSIF stStatus.stZ1.eStep = E_Z1_Step.DelayToZ2 THEN
+			eNewStep := E_Z2_Step.WaitZ3Ready;
+		END_IF;
+		
+		// exit action 
+		IF eNewStep <> E_Z2_Step.NoStep THEN
+			;
+		END_IF;	
 	
 	// WaitZ3Ready
 	E_Z2_Step.WaitZ3Ready :
-	// entry action
-	IF NOT bEntryact THEN
-	bStopRequest := FALSE;
-	bConveyorLoaded := FALSE;
-	bEntryact := TRUE;
-	END_IF;
-	// body
-	bQ1 :=  FALSE;
-	bQ2 := FALSE;
-	bErr := FALSE;
-	//transition from WaitZ3Ready to MoveForward
-	IF (NOT(bStopRequest) AND stStatus.stZ3.eStep = E_Z3_Step.Ready) THEN
-		eNewStep := E_Z2_Step.MoveForward;		
-	END_IF;	
-	// transition from WaitZ3Ready to Recovering
-	IF (bStopRequest) THEN 
-		eNewStep := E_Z2_Step.Recovering;
-	END_IF; 	
-	// exit action
-	IF eNewStep <> E_Z2_Step.NoStep THEN ;
-	END_IF;
+		// entry action
+		IF NOT bEntryact THEN
+			bErr := FALSE;
+			bEntryact := TRUE;
+		END_IF;
+		
+		// body
+		bQ1 := FALSE;
+		bQ2 := FALSE;
+		
+		//transition from WaitZ3Ready to Recovering / MoveForward
+		IF bStopRequest THEN 
+			eNewStep := E_Z2_Step.Recovering;
+		ELSIF stStatus.stZ3.eStep = E_Z3_Step.Ready THEN
+			eNewStep := E_Z2_Step.MoveForward; 
+		END_IF; 	
+	
+		// exit action
+		IF eNewStep <> E_Z2_Step.NoStep THEN
+			;
+		END_IF;
 			
-	//MoveForward
+	// MoveForward
     E_Z2_Step.MoveForward :
-	// entry action
-	IF NOT bEntryact THEN
-	bStopRequest := FALSE;
-	bConveyorLoaded := FALSE;
-	bEntryact := TRUE;
-	END_IF;
-	//body
-    bQ1 :=  FALSE;
-	bQ2 := NOT(bI1);
-	bErr := FALSE;
-	//transition from MoveForward to MoveBackward
-	IF (fbRtI1.Q) THEN
-		eNewStep := E_Z2_Step.MoveBackward; 
-	END_IF;
-	// exit action
-	IF eNewStep <> E_Z2_Step.NoStep THEN ;
-	END_IF;
+		// entry action
+		IF NOT bEntryact THEN
+			bErr := FALSE;
+			bEntryact := TRUE;
+		END_IF;
+		
+		//body
+		bQ1 := FALSE;
+		bQ2 := NOT(bI1);
+		
+		//transition from MoveForward to MoveBackward
+		IF (fbRtI1.Q) THEN
+			eNewStep := E_Z2_Step.MoveBackward; 
+		END_IF;
+		
+		// exit action
+		IF eNewStep <> E_Z2_Step.NoStep THEN
+			;
+		END_IF;
 	
-	//MoveBackward
+	// MoveBackward
     E_Z2_Step.MoveBackward :
-	// entry action
-	IF NOT bEntryact THEN
-	bStopRequest := FALSE;
-	bConveyorLoaded := FALSE;
-	bEntryact := TRUE;
-	END_IF;
-	//body
-    bQ1 :=  NOT(bI2);
-	bQ2 := FALSE;
-	bErr := FALSE;
-	//transition from MoveBackward to Done
-	IF (fbRtI2.Q) THEN
-		eNewStep := E_Z2_Step.Done; 
-	END_IF;
-	// exit action
-	IF eNewStep <> E_Z2_Step.NoStep THEN ;
-	END_IF;
+		// entry action
+		IF NOT bEntryact THEN
+			bErr := FALSE;
+			bEntryact := TRUE;
+		END_IF;
+		
+		//body
+		bQ1 :=  NOT(bI2);
+		bQ2 := FALSE;
+		
+		//transition from MoveBackward to Done
+		IF (fbRtI2.Q) THEN
+			eNewStep := E_Z2_Step.Done; 
+		END_IF;
+		
+		// exit action
+		IF eNewStep <> E_Z2_Step.NoStep THEN
+			;
+		END_IF;
 	
-   //Done
+   // Done
     E_Z2_Step.Done :
-	// entry action
-    IF NOT bEntryact THEN
-	bStopRequest := FALSE;
-	bConveyorLoaded := FALSE;
-	bEntryact := TRUE;
-	END_IF;
-	//body
-    bQ1 :=  FALSE;
-	bQ2 :=  FALSE;
-	bErr := FALSE;
-	//transition from MoveBackward to Done
+		// entry action
+		IF NOT bEntryact THEN
+			bErr := FALSE;
+			bEntryact := TRUE;
+		END_IF;
+		
+		//body
+		bQ1 :=  FALSE;
+		bQ2 :=  FALSE;
+		
+		//transition from MoveBackward to Done
 		eNewStep := E_Z2_Step.Ready; 
-	// exit action
-		IF eNewStep <> E_Z2_Step.NoStep THEN;
-			END_IF;
+		// exit action
+		IF eNewStep <> E_Z2_Step.NoStep THEN
+			;
+		END_IF;
+		
 	ELSE
 			eNewstep :=  E_Z2_Step.NeOrError;
 			stStatus.stZ2.eErrorStep :=  E_Z2_Step.Unknown;			
@@ -248,7 +259,7 @@ ELSE
 	(* tempo di permanenza nello step *)
 	fbTonStep(IN := (eNewstep =  E_Z2_Step.NoStep), PT := T#500H);
 	stStatus.stZ2.tStepTime := fbTonStep.ET;	
-	END_IF]]></ST>
+END_IF]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>
