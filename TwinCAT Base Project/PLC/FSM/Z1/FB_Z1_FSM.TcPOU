@@ -80,8 +80,6 @@ ELSE
 			END_IF
 			
 			// body
-			bQ6 := FALSE;
-			bQ7 := FALSE;
 			bErr := TRUE;
 					
 			
@@ -94,8 +92,8 @@ ELSE
 		
 			// on exit action
 			IF eNewStep <> E_Z1_Step.NoStep THEN
-				nErrId := 0;
-				eErrStep := E_Z1_Step.NoStep;
+				stStatus.stZ1.nErrorId := 1;
+				stStatus.stZ1.eErrorStep := E_Z1_Step.NoStep;
 			END_IF	
 	E_Z1_Step.Stop :
 		// on entry action
@@ -265,5 +263,10 @@ ELSE
 	
 END_IF	]]></ST>
     </Implementation>
+    <LineIds Name="FB_Z1_FSM">
+      <LineId Id="3" Count="43" />
+      <LineId Id="49" Count="180" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
   </POU>
 </TcPlcObject>
