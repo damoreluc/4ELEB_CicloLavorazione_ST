@@ -99,9 +99,9 @@ ELSE
 		// Body		
 		bQ10 := FALSE;
 		
-		// transition from Ready to Loading / Stop
+		// transition from Ready to Loading / Recovering
 		IF bStopRequest THEN
-			eNewStep := E_Z6_Step.Stop;
+			eNewStep := E_Z6_Step.Recovering;
 		ELSE
 			IF (stStatus.stZ5.eStep = E_Z5_Step.WaitZ6Ready) THEN
 				eNewStep := E_Z6_Step.Loading;
@@ -124,9 +124,9 @@ ELSE
 		// Body	
 		bQ10 := TRUE;
 		
-		// transition from Loading to Stop / WaitUnloading
+		// transition from Loading to Recovering / WaitUnloading
 		IF bStopRequest THEN
-			eNewStep := E_Z6_Step.Stop;
+			eNewStep := E_Z6_Step.Recovering;
 		ELSE
 			IF fbrtI9.Q THEN
 				eNewStep := E_Z6_Step.WaitUnloading;
@@ -192,7 +192,7 @@ ELSE
 		// transition from NeOrError to Recovering	
 		IF bEnable THEN
 			IF bAck THEN
-				eNewStep	:=	E_Z6_Step.Recovering;
+				eNewStep := E_Z6_Step.Recovering;
 			END_IF
 		END_IF
 	
@@ -211,7 +211,7 @@ ELSE
 		END_IF
 		
 		// Body	
-		bQ10	:=	FALSE;
+		bQ10 := FALSE;
 
 		// transition from Recovering to Stop	
 		IF bEnable THEN

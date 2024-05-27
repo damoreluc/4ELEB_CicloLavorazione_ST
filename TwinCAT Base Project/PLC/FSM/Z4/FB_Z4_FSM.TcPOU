@@ -241,8 +241,8 @@ ELSE
 		END_IF
 		
 		// body	
-		bQ8 := FALSE;
-		bQ9 := TRUE;
+		bQ8 := TRUE;
+		bQ9 := FALSE;
 
 		// next state transition
 		IF stStatus.stZ4.tStepTime > stParams.tDelayToZ5 THEN 

@@ -158,7 +158,7 @@ ELSE
 
 			// next state transition
 			IF bStopRequest THEN 
-				eNewStep := E_Z3_Step.Stop;
+				eNewStep := E_Z3_Step.Recovering;
 			ELSIF stStatus.stZ2.eStep=E_Z2_Step.WaitZ3Ready THEN
 				eNewStep := E_Z3_Step.MoveToMill;
 			END_IF
@@ -250,8 +250,8 @@ ELSE
 			END_IF
 			
 			// body	
-			bQ6 := FALSE;
-			bQ7 := TRUE;
+			bQ6 := TRUE;
+			bQ7 := FALSE;
 			
 			// next state transition
 			IF stStatus.stZ3.tStepTime > stParams.tDelayToZ4 THEN 
