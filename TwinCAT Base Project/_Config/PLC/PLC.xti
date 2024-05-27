@@ -221,4 +221,38 @@
 			</TaskPouOids>
 		</Instance>
 	</Project>
+	<Mappings>
+		<OwnerA Name="PLC Instance">
+			<OwnerB Name="TIID^Device 4 (EtherCAT)^Term 10 (EK1100)^Term 11 (EL1809)">
+				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bAckButton" VarB="Channel 12^Input" Size="1"/>
+				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bEmergency" VarB="Channel 13^Input" Size="1"/>
+				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bI1" VarB="Channel 1^Input" Size="1"/>
+				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bI2" VarB="Channel 2^Input" Size="1"/>
+				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bI3" VarB="Channel 3^Input" Size="1"/>
+				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bI4" VarB="Channel 4^Input" Size="1"/>
+				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bI5" VarB="Channel 5^Input" Size="1"/>
+				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bI6" VarB="Channel 6^Input" Size="1"/>
+				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bI7" VarB="Channel 7^Input" Size="1"/>
+				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bI8" VarB="Channel 8^Input" Size="1"/>
+				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bI9" VarB="Channel 9^Input" Size="1"/>
+				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bStartButton" VarB="Channel 10^Input" Size="1"/>
+				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bStopButton" VarB="Channel 11^Input" Size="1"/>
+			</OwnerB>
+			<OwnerB Name="TIID^Device 4 (EtherCAT)^Term 10 (EK1100)^Term 12 (EL2809)">
+				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bGreen" VarB="Channel 11^Output" Size="1"/>
+				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bQ1" VarB="Channel 1^Output" Size="1"/>
+				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bQ10" VarB="Channel 10^Output" Size="1"/>
+				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bQ2" VarB="Channel 2^Output" Size="1"/>
+				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bQ3" VarB="Channel 3^Output" Size="1"/>
+				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bQ4" VarB="Channel 4^Output" Size="1"/>
+				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bQ5" VarB="Channel 5^Output" Size="1"/>
+				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bQ6" VarB="Channel 6^Output" Size="1"/>
+				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bQ7" VarB="Channel 7^Output" Size="1"/>
+				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bQ8" VarB="Channel 8^Output" Size="1"/>
+				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bQ9" VarB="Channel 9^Output" Size="1"/>
+				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bRed" VarB="Channel 12^Output" Size="1"/>
+				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bYellow" VarB="Channel 13^Output" Size="1"/>
+			</OwnerB>
+		</OwnerA>
+	</Mappings>
 </TcSmItem>
