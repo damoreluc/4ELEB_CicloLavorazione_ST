@@ -239,5 +239,9 @@ ELSE
 	
 END_IF	]]></ST>
     </Implementation>
+    <LineIds Name="FB_Z6_FSM">
+      <LineId Id="3" Count="206" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
   </POU>
 </TcPlcObject>
