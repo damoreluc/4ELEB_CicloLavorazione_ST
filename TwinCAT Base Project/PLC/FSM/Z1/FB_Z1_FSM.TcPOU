@@ -99,7 +99,7 @@ ELSE
 		
 			// on exit action
 			IF eNewStep <> E_Z1_Step.NoStep THEN
-				nErrId := 0;
+				nErrId := 1;
 				eErrStep := E_Z1_Step.NoStep;
 			END_IF	
 	E_Z1_Step.Stop :
