@@ -5,7 +5,6 @@
 VAR_INPUT
 	bEnable		:	BOOL;
 	bAck		:	BOOL;
-	bStart		:	BOOL;
 	bStop		:	BOOL;
 	bI8			:	BOOL;
 	stParams	:	ST_Z4_Params;	
@@ -35,7 +34,7 @@ END_VAR
     <Implementation>
       <ST><![CDATA[IF NOT bInitialized THEN
 	eNewstep :=  E_Z4_Step.NoStep;
-	stStatus.stZ4.eStep :=  E_Z4_Step.Stop;
+	stStatus.stZ4.eStep :=  E_Z4_Step.NeOrError;
 	bEntryact := FALSE;
 	bInitialized := TRUE;	
 	bErr := FALSE;
@@ -61,12 +60,7 @@ ELSE
 		stStatus.stZ4.eStep := eNewstep;
 		eNewstep :=  E_Z4_Step.NoStep;
 		bEntryact := FALSE;
-	END_IF;
-
-	(* transizioni di stato *)
-	IF ST_Z4_Status.tStepTime>ST_Z4_Params.tStopDelay THEN
-         ST_Z4_Status.eStep := E_Z4_Step.Ready;
-END_IF	
+	END_IF
 	
 	(* Guasto e Rispristino *)
 	IF stStatus.bFailure THEN
@@ -75,242 +69,215 @@ END_IF
 
 	(* switch - case della MSF *)
 	CASE stStatus.stZ4.eStep OF
-			// To be done...
-	E_Z4_Step.NeOrError :
-			// on entry action
-			IF NOT bEntryact THEN
-				stStatus.bFailure := TRUE;
-				bEntryact := TRUE;
-			END_IF
-			
-			// body
-			bQ8 := FALSE;
-			bQ9 := FALSE;
-			bErr := TRUE;
-					
-			
-			// next state transition
-			IF bEnable THEN
-				IF bAck THEN
-					eNewStep := E_Z4_Step.Recovering;
-				END_IF
-			END_IF
 		
-			// on exit action
-			IF eNewStep <> E_Z4_Step.NoStep THEN
-				ST_Z4_Status.nErrorId := 4;
-				ST_Z4_Status.eErrorStep := E_Z4_Step.NoStep;
+	// NeOrError ---------------------------------			
+	E_Z4_Step.NeOrError :
+		// on entry action
+		IF NOT bEntryact THEN
+			bErr := TRUE;
+			bEntryact := TRUE;
+		END_IF
+		
+		// body
+		bQ8 := FALSE;
+		bQ9 := FALSE;			
+			
+		// next state transition
+		IF bEnable THEN
+			IF bAck THEN
+				eNewStep := E_Z4_Step.Recovering;
 			END_IF
+		END_IF
+		
+		// on exit action
+		IF eNewStep <> E_Z4_Step.NoStep THEN
+			stStatus.stZ4.nErrorId := 4;
+			stStatus.stZ4.eErrorStep := E_Z4_Step.NoStep;
+		END_IF
 	
-			// Recovering ---------------------------------			
-		E_Z4_Step.Recovering :
-			// on entry action
-			IF NOT bEntryact THEN
-				bEntryact := TRUE;
-			END_IF
+	// Recovering ---------------------------------			
+	E_Z4_Step.Recovering :
+		// on entry action
+		IF NOT bEntryact THEN
+			bErr := FALSE;			
+			bEntryact := TRUE;
+		END_IF
 			
-			// body	
-			bQ8 := FALSE;
-			bQ9 := FALSE;
-			bErr := FALSE;
+		// body	
+		bQ8 := FALSE;
+		bQ9 := FALSE;
+		
+		// next state transition
+		IF bEnable THEN
+			eNewStep := E_Z4_Step.Stop;			
+		END_IF
+		
+		// on exit action
+		IF eNewStep <> E_Z4_Step.NoStep THEN
+			;
+		END_IF			
 			
-			// next state transition
-			IF bEnable THEN
-				IF NOT(stStatus.bFailure) THEN
-					IF (ST_Z4_status.tStepTime > stParams.tRecovering) THEN
-						eNewStep := E_Z4_Step.Stop;
-					END_IF
-				END_IF				
-			END_IF
+	// Stop ---------------------------------------
+	E_Z4_Step.Stop :
+		// on entry action
+		IF NOT bEntryact THEN
+			bStopRequest := FALSE;
+			bErr:= FALSE;				
+			bEntryact := TRUE;
+		END_IF
 			
-			// on exit action
-			IF eNewStep <> E_Z4_Step.NoStep THEN
-				stStatus.bFailure := FALSE;
-			END_IF			
+		// body	
+		bQ8 := FALSE;
+		bQ9 := FALSE;
 			
-		// Stop ---------------------------------------
-		E_Z4_Step.Stop :
-			// on entry action
-			IF NOT bEntryact THEN
-				bStopRequest := FALSE;
-				bConveyorLoaded := FALSE;
-				bEntryact := TRUE;
-			END_IF
-			
-			// body	
-			bQ8 := FALSE;
-			bQ9 := FALSE;
-			bErr:= FALSE;
-			
-			// next state transition
-			IF NOT bStop AND bStart THEN
-				IF (ST_Z4_status.tStepTime > ST_Z4_Params.tStopDelay) THEN
-					eNewStep := E_Z4_Step.Ready;
-				END_IF
-			END_IF
-			
-			// on exit action
-			IF eNewStep <> E_Z4_Step.NoStep THEN
-				;
-			END_IF
-			
-		// Ready ---------------------------------------
-		E_Z4_Step.Ready :
-			// on entry action
-			IF NOT bEntryact THEN
-				bStopRequest := FALSE;
-				bConveyorLoaded := FALSE;
-				bEntryact := TRUE;
-			END_IF
-			
-			// body	
-			bQ8 := FALSE;
-			bQ9 := FALSE;
-			bErr:= FALSE;
-			
-			// next state transition
-			IF bStopRequest THEN 
-				eNewStep := E_Z4_Step.Recovering;
-			ELSIF stStatus.stZ3.eStep=E_Z3_Step.WaitZ4Ready THEN
-				eNewStep := E_Z4_Step.MoveToDrill;
-			END_IF
-			
-			// on exit action
-			IF eNewStep <> E_Z4_Step.NoStep THEN
-				;
-			END_IF
-			
-			// MoveToDrill ---------------------------------------
-		E_Z4_Step.MoveToDrill :
-			// on entry action
-			IF NOT bEntryact THEN
-			//	bStopRequest := FALSE;
-			//	bConveyorLoaded := FALSE;
-				bEntryact := TRUE;
-			END_IF
-			
-			// body	
-			bQ8 := NOT(bI8);
-			bQ9 := FALSE;
-			bErr:= FALSE;
-			
-			// next state transition
-			IF bStopRequest THEN 
-				eNewStep := E_Z4_Step.Recovering;
-			ELSIF bI8 THEN
-				eNewStep := E_Z4_Step.Drilling;
-			END_IF
-			
-			// on exit action
-			IF eNewStep <> E_Z4_Step.NoStep THEN
-				;
-			END_IF
-						
-
-		// Drilling ---------------------------------------
-		E_Z4_Step.Drilling :
-			// on entry action
-			IF NOT bEntryact THEN
-				bStopRequest := FALSE;
-				bConveyorLoaded := FALSE;
-				bEntryact := TRUE;
-			END_IF
-			
-			// body	
-			bQ8 := FALSE;
-			bQ9 := TRUE;
-			bErr:= FALSE;
-			
-			// next state transition
-			IF ST_Z4_Status.tStepTime > stParams.tDrilling THEN 
-				eNewStep := E_Z4_Step.WaitZ5Ready;
-			END_IF
-			
-			// on exit action
-			IF eNewStep <> E_Z4_Step.NoStep THEN
-				;
-			END_IF
-			
-		// WaitZ5Ready ---------------------------------------
-		E_Z4_Step.WaitZ5Ready :
-			// on entry action
-			IF NOT bEntryact THEN
-				bStopRequest := FALSE;
-				bConveyorLoaded := FALSE;
-				bEntryact := TRUE;
-			END_IF
-			
-			// body	
-			bQ8 := FALSE;
-			bQ9 := FALSE;
-			bErr:= FALSE;
-			
-			// next state transition
-			IF stStatus.stZ5.eStep=E_Z5_Step.Ready THEN 
-				eNewStep := E_Z4_Step.MoveToZ5;
-			END_IF
-			
-			// on exit action
-			IF eNewStep <> E_Z4_Step.NoStep THEN
-				;
-			END_IF
-			
-		// MoveToZ5 ---------------------------------------
-		E_Z4_Step.MoveToZ5 :
-			// on entry action
-			IF NOT bEntryact THEN
-				bStopRequest := FALSE;
-				bConveyorLoaded := FALSE;
-				bEntryact := TRUE;
-			END_IF
-			
-			// body	
-			bQ8 := FALSE;
-			bQ9 := TRUE;
-			bErr:= FALSE;
-			
-			// next state transition
-			IF ST_Z4_Status.tStepTime > stParams.tDelayToZ5 THEN 
-				eNewStep := E_Z4_Step.Done;
-			END_IF
-			
-			// on exit action
-			IF eNewStep <> E_Z4_Step.NoStep THEN
-				;
-			END_IF
-			
-		// Done ---------------------------------------
-		E_Z4_Step.Done :
-			// on entry action
-			IF NOT bEntryact THEN
-				bStopRequest := FALSE;
-				bConveyorLoaded := FALSE;
-				bEntryact := TRUE;
-			END_IF
-			
-			// body	
-			bQ8 := FALSE;
-			bQ9 := FALSE;
-			bErr:= FALSE;
-			
-			// next state transition
-				
+		// next state transition
+		IF (stStatus.stZ4.tStepTime > stParams.tStopDelay) THEN
 			eNewStep := E_Z4_Step.Ready;
+		END_IF
+
+		// on exit action
+		IF eNewStep <> E_Z4_Step.NoStep THEN
+			;
+		END_IF
 			
+	// Ready ---------------------------------------
+	E_Z4_Step.Ready :
+		// on entry action
+		IF NOT bEntryact THEN
+			bErr:= FALSE;
+			bEntryact := TRUE;
+		END_IF
 			
-			// on exit action
-			IF eNewStep <> E_Z4_Step.NoStep THEN
-				;
-			END_IF
+		// body	
+		bQ8 := FALSE;
+		bQ9 := FALSE;
+						
+		// next state transition
+		IF bStopRequest THEN 
+			eNewStep := E_Z4_Step.Recovering;
+		ELSIF stStatus.stZ3.eStep = E_Z3_Step.WaitZ4Ready THEN
+			eNewStep := E_Z4_Step.MoveToDrill;
+		END_IF
+		
+		// on exit action
+		IF eNewStep <> E_Z4_Step.NoStep THEN
+			;
+		END_IF
 			
-	// To be done...
+	// MoveToDrill ---------------------------------------
+	E_Z4_Step.MoveToDrill :
+		// on entry action
+		IF NOT bEntryact THEN
+			bErr:= FALSE;
+			bEntryact := TRUE;
+		END_IF
+			
+		// body	
+		bQ8 := NOT(bI8);
+		bQ9 := FALSE;
+			
+		// next state transition
+		IF bStopRequest THEN 
+			eNewStep := E_Z4_Step.Recovering;
+		ELSIF fbRtI8.Q THEN
+			eNewStep := E_Z4_Step.Drilling;
+		END_IF
+			
+		// on exit action
+		IF eNewStep <> E_Z4_Step.NoStep THEN
+			;
+		END_IF
+						
+	// Drilling ---------------------------------------
+	E_Z4_Step.Drilling :
+		// on entry action
+		IF NOT bEntryact THEN
+			bErr:= FALSE;
+			bEntryact := TRUE;
+		END_IF
+			
+		// body	
+		bQ8 := FALSE;
+		bQ9 := TRUE;
+			
+		// next state transition
+		IF stStatus.stZ4.tStepTime > stParams.tDrilling THEN 
+			eNewStep := E_Z4_Step.WaitZ5Ready;
+		END_IF
+			
+		// on exit action
+		IF eNewStep <> E_Z4_Step.NoStep THEN
+			;
+		END_IF
+			
+	// WaitZ5Ready ---------------------------------------
+	E_Z4_Step.WaitZ5Ready :
+		// on entry action
+		IF NOT bEntryact THEN
+			bErr:= FALSE;
+			bEntryact := TRUE;
+		END_IF
+			
+		// body	
+		bQ8 := FALSE;
+		bQ9 := FALSE;
+
+		// next state transition
+		IF stStatus.stZ5.eStep=E_Z5_Step.Ready THEN 
+			eNewStep := E_Z4_Step.MoveToZ5;
+		END_IF
+			
+		// on exit action
+		IF eNewStep <> E_Z4_Step.NoStep THEN
+			;
+		END_IF
+			
+	// MoveToZ5 ---------------------------------------
+	E_Z4_Step.MoveToZ5 :
+		// on entry action
+		IF NOT bEntryact THEN
+			bErr:= FALSE;
+			bEntryact := TRUE;
+		END_IF
+		
+		// body	
+		bQ8 := FALSE;
+		bQ9 := TRUE;
+
+		// next state transition
+		IF stStatus.stZ4.tStepTime > stParams.tDelayToZ5 THEN 
+			eNewStep := E_Z4_Step.Done;
+		END_IF
+		
+		// on exit action
+		IF eNewStep <> E_Z4_Step.NoStep THEN
+			;
+		END_IF
+			
+	// Done ---------------------------------------
+	E_Z4_Step.Done :
+		// on entry action
+		IF NOT bEntryact THEN
+			bErr:= FALSE;
+			bEntryact := TRUE;
+		END_IF
+			
+		// body	
+		bQ8 := FALSE;
+		bQ9 := FALSE;
+	
+		// next state transition	
+		eNewStep := E_Z4_Step.Ready;
+		
+		// on exit action
+		IF eNewStep <> E_Z4_Step.NoStep THEN
+			;
+		END_IF
 
 	ELSE
 			eNewstep :=  E_Z4_Step.NeOrError;
 			stStatus.stZ4.eErrorStep :=  E_Z4_Step.Unknown;			
 			stStatus.stZ4.nErrorId := 16#0004_9999;	
-	
-	
 	END_CASE
 	
 	(* call FBs *)
@@ -319,26 +286,7 @@ END_IF
 	fbTonStep(IN := (eNewstep =  E_Z4_Step.NoStep), PT := T#500H);
 	stStatus.stZ4.tStepTime := fbTonStep.ET;	
 	
-END_IF	]]></ST>
+END_IF]]></ST>
     </Implementation>
-    <LineIds Name="FB_Z4_FSM">
-      <LineId Id="3" Count="28" />
-      <LineId Id="108" Count="0" />
-      <LineId Id="107" Count="0" />
-      <LineId Id="117" Count="1" />
-      <LineId Id="113" Count="0" />
-      <LineId Id="32" Count="0" />
-      <LineId Id="435" Count="3" />
-      <LineId Id="433" Count="0" />
-      <LineId Id="33" Count="1" />
-      <LineId Id="173" Count="227" />
-      <LineId Id="35" Count="0" />
-      <LineId Id="131" Count="0" />
-      <LineId Id="38" Count="3" />
-      <LineId Id="142" Count="0" />
-      <LineId Id="137" Count="0" />
-      <LineId Id="42" Count="7" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
   </POU>
 </TcPlcObject>

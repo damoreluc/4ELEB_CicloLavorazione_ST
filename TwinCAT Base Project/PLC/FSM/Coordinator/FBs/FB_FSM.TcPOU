@@ -12,10 +12,6 @@ VAR_IN_OUT
 	stStatus	:	ST_FSM_Status;	
 END_VAR
 VAR_OUTPUT	
-	eStep		:	E_FSM_Step;
-	tStepTime	:	TIME;
-	eErrStep	:	E_FSM_Step;
-	nErrId		:	DINT;
 	// Digital Outputs
 	stOut		:	ST_FSM_Out;	
 	
@@ -96,8 +92,8 @@ ELSE
 		
 			// on exit action
 			IF eNewStep <> E_FSM_Step.NoStep THEN
-				nErrId := 0;
-				eErrStep := E_FSM_Step.NoStep;
+				stStatus.nErrorID := 0;
+				stStatus.eErrorStep := E_FSM_Step.NoStep;
 			END_IF
 
 		// Recovering ---------------------------------			
@@ -117,9 +113,9 @@ ELSE
 			
 			// next state transition
 			IF stCtrl.bEnable THEN
-				IF FC_AllStopped(stStatus) THEN
+				IF stStatus.tStepTime > stParams.tStoppingDelay THEN
 					eNewStep := E_FSM_Step.Stopping;
-				END_IF				
+				END_IF									
 			END_IF
 			
 			// on exit action
@@ -143,10 +139,14 @@ ELSE
 			stOut.bBlinkingYellow := TRUE;
 			
 			// next state transition
-			IF stCtrl.bEnable THEN
-				IF stStatus.tStepTime > stParams.tStoppingDelay THEN
-					eNewStep := E_FSM_Step.Stop;
-				END_IF				
+			IF stCtrl.bEnable THEN	
+                IF stStatus.tStepTime > stParams.tStoppingDelay THEN	
+					IF FC_AllStopped(stStatus) THEN
+						eNewStep := E_FSM_Step.Stop;
+					ELSE 
+						eNewStep := E_FSM_Step.NeOrError;
+					END_IF	
+                END_IF		
 			END_IF
 			
 			// on exit action
@@ -167,7 +167,7 @@ ELSE
 			stOut.bFixedRed := TRUE;
 			stOut.bBlinkingRed := FALSE;
 			stOut.bFixedYellow := FALSE;
-			stOut.bBlinkingYellow := TRUE;
+			stOut.bBlinkingYellow := FALSE;
 			
 			// next state transition
 			IF stCtrl.bEnable AND stCmd.bStart AND NOT stCmd.bStop THEN
@@ -221,34 +221,5 @@ ELSE
 	
 END_IF]]></ST>
     </Implementation>
-    <LineIds Name="FB_FSM">
-      <LineId Id="3" Count="10" />
-      <LineId Id="200" Count="0" />
-      <LineId Id="14" Count="14" />
-      <LineId Id="30" Count="7" />
-      <LineId Id="82" Count="9" />
-      <LineId Id="106" Count="3" />
-      <LineId Id="94" Count="11" />
-      <LineId Id="38" Count="0" />
-      <LineId Id="146" Count="8" />
-      <LineId Id="195" Count="4" />
-      <LineId Id="157" Count="4" />
-      <LineId Id="163" Count="0" />
-      <LineId Id="165" Count="5" />
-      <LineId Id="39" Count="0" />
-      <LineId Id="202" Count="0" />
-      <LineId Id="204" Count="43" />
-      <LineId Id="249" Count="0" />
-      <LineId Id="251" Count="4" />
-      <LineId Id="201" Count="0" />
-      <LineId Id="256" Count="19" />
-      <LineId Id="316" Count="0" />
-      <LineId Id="276" Count="3" />
-      <LineId Id="145" Count="0" />
-      <LineId Id="281" Count="0" />
-      <LineId Id="280" Count="0" />
-      <LineId Id="40" Count="12" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
   </POU>
 </TcPlcObject>
