@@ -73,29 +73,28 @@ ELSE
 		
 	// NeOrError ---------------------------------
 	E_Z1_Step.NeOrError :
-		// on entry action
-		IF NOT bEntryact THEN
-			bErr := TRUE;
-			bEntryact := TRUE;
-		END_IF
-		
-		// body
-		bQ5 := FALSE;				
-		
-		// next state transition
-		IF bEnable THEN
-			IF bAck THEN
-				eNewStep := E_Z1_Step.Recovering;
+			// on entry action
+			IF NOT bEntryact THEN
+				bErr := TRUE;
+				bEntryact := TRUE;
 			END_IF
-		END_IF
-	
-		// on exit action
-		IF eNewStep <> E_Z1_Step.NoStep THEN
-			stStatus.stZ1.nErrorId := 1;
-			stStatus.stZ1.eErrorStep := E_Z1_Step.NoStep;
-		END_IF
+			
+			// body
+			bErr := TRUE;
+					
+			
+			// next state transition
+			IF bEnable THEN
+				IF bAck THEN
+					eNewStep := E_Z1_Step.Recovering;
+				END_IF
+			END_IF
 		
-	// Stop ---------------------------------	
+			// on exit action
+			IF eNewStep <> E_Z1_Step.NoStep THEN
+				stStatus.stZ1.nErrorId := 1;
+				stStatus.stZ1.eErrorStep := E_Z1_Step.NoStep;
+			END_IF	
 	E_Z1_Step.Stop :
 		// on entry action
 		IF NOT bEntryact THEN
@@ -265,5 +264,10 @@ ELSE
 	
 END_IF	]]></ST>
     </Implementation>
+    <LineIds Name="FB_Z1_FSM">
+      <LineId Id="3" Count="43" />
+      <LineId Id="49" Count="180" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
   </POU>
 </TcPlcObject>
