@@ -8,7 +8,6 @@ VAR_INPUT
 	bStop		:	BOOL;
 	bI1			:	BOOL;
 	bI2			:	BOOL;
-	bI5			:	BOOL;   // transizione da Ready a WaitZ3
 	stParams	:	ST_Z2_Params;	
 END_VAR
 VAR_IN_OUT
@@ -26,11 +25,9 @@ VAR
 	eNewstep		:	E_Z2_Step;
 	bEntryact		:	BOOL;
 	fbTonStep		:	TON;
-	
 	fbRtStop		:	R_TRIG;
 	fbRtI1			:	R_TRIG;
 	fbRtI2			:	R_TRIG;
-	fbRtI5			:	R_TRIG;
 	bStopRequest	:	BOOL;	
 	bConveyorLoaded :   BOOL;
 END_VAR
@@ -38,7 +35,7 @@ END_VAR
     <Implementation>
       <ST><![CDATA[IF NOT bInitialized THEN
 	eNewstep :=  E_Z2_Step.NoStep;
-	stStatus.stZ2.eStep :=  E_Z2_Step.Stop;
+	stStatus.stZ2.eStep :=  E_Z2_Step.NeOrError;
 	bEntryact := FALSE;
 	bInitialized := TRUE;	
 	bErr := FALSE;
@@ -49,7 +46,7 @@ ELSE
 	fbRtStop(CLK:= bStop);	
 	fbRtI1(CLK := bI1);
 	fbRtI2(CLK := bI2);
-	fbRtI5(CLK := bI5);
+	
 	(* richieste *)
 	IF fbRtStop.Q THEN
 		bStopRequest := TRUE;
@@ -120,6 +117,7 @@ ELSE
 		// entry action
 		IF NOT bEntryact THEN
 			bErr := FALSE;
+			bStopRequest := FALSE;
 			bEntryact := TRUE;
 		END_IF;
 		
@@ -128,7 +126,7 @@ ELSE
 		bQ2 := FALSE;
 		
 		//transition from Stop to Ready
-		IF (stStatus.tStepTime > stParams.tStopDelay) THEN
+		IF (stStatus.stZ2.tStepTime > stParams.tStopDelay) THEN
 			eNewStep := E_Z2_Step.Ready; 
 		END_IF;
 		
@@ -243,6 +241,7 @@ ELSE
 		
 		//transition from MoveBackward to Done
 		eNewStep := E_Z2_Step.Ready; 
+		
 		// exit action
 		IF eNewStep <> E_Z2_Step.NoStep THEN
 			;
